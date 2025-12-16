@@ -1,7 +1,7 @@
 NAME = btc
 
 SRC = src/main.cpp \
-		src/BitcoinExchange
+		src/BitcoinExchange.cpp
 	
 OBJ := $(SRC:%.cpp=%.o)
 
@@ -21,10 +21,10 @@ clean:
 	@rm -f $(OBJ) && echo "\033[31mObjects cleared!\033[0m"
 
 fclean:
-	@rm -f $(NAME) &(OBJ) > /dev/null && echo "\033[31mProgram cleared successfully!\033[0m"
+	@rm -f $(NAME) $(OBJ) > /dev/null && echo "\033[31mProgram cleared successfully!\033[0m"
 
 re: fclean all
 	@echo "\033[36mRunning $(NAME)..."
-	@echo "\n===== 31mProgram36m =====\n\033[0m"
+	@echo "\n===== Program =====\n\033[0m"
 	@./$(NAME)
 .PHONY: all fclean re
