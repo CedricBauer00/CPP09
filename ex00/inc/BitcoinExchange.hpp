@@ -10,18 +10,11 @@
 #define GREEN  "\033[32m"
 #define RESET  "\033[0m"
 #define ORANGE  "\033[38;2;255;120;0m"
-// takes csv files as database
-// csv files geht von 2009 bis 2021; jeder Eintrag ist + 3 Tage; 1610 einträge
-// input will be second database "storing the different prices/dates to evaluate."
 
-//rules to respect
-// takes file as argument
-// checking for "date|value" format
-// valid date ONLY: Year-Month-Day
-// valid value ONLY: flaot && positive integer between 0-1000
-// appropriate error message
-
-//map stack pair
+// from year 2009 until 2021; 
+// 1 entry all 3 days;
+// 1610 entries;
+// leap years: 2012 2016 2020, ...
 
 class BitcoinExchange
 {

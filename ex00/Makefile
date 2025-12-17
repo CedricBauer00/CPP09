@@ -24,7 +24,5 @@ fclean:
 	@rm -f $(NAME) $(OBJ) > /dev/null && echo "\033[31mProgram cleared successfully!\033[0m"
 
 re: fclean all
-	@echo "\033[36mRunning $(NAME)..."
-	@echo "\n===== Program =====\n\033[0m"
-	@./$(NAME)
+
 .PHONY: all fclean re
