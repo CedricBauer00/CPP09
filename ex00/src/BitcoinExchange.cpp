@@ -8,19 +8,18 @@ BitcoinExchange::BitcoinExchange()
 BitcoinExchange::BitcoinExchange( const std::string& inputData )
 {
     std::cout << GREEN << "Bitcoin Constructor!" << RESET << std::endl;
+   
     std::ifstream file( inputData.c_str() ); //c_str wandelt c++ string (std::string) in const char* um, brauchen wir fuer std::atof() - erwaratet string der mit '\0' endet
+    
     if ( !file.is_open() )
-    {
         throw std::runtime_error("Could not open file!");
-    }
     
     std::string line;
-    size_t delim;
     while ( std::getline( file, line ) )
     {
-        delim = line.find(',');
+        size_t delim = line.find(',');
         if ( delim == std::string::npos ) // wenn kein Comma gefunden wurde ueberstring diese Zeile
-            continue;
+            continue ;
         
         std::string date = line.substr( 0, delim );
         float value = std::atof( line.substr( delim + 1 ).c_str());
@@ -40,7 +39,7 @@ BitcoinExchange& BitcoinExchange::operator=( const BitcoinExchange& copy )
     {
         _database = copy._database;
     }
-    return *this;
+    return *this ;
 }
 
 BitcoinExchange::~BitcoinExchange()
@@ -48,27 +47,48 @@ BitcoinExchange::~BitcoinExchange()
     std::cout << RED << "Bitcoin Destructor!" << RESET << std::endl;
 }
 
+bool isLeapYear( const int year )
+{
+    if ( year % 4 == 0 && ( year % 100 != 0 || year % 400 == 0 ) )
+        return true ;
+    return false ;
+}
+
 bool validateDate( const std::string& date )
 {
     if ( date.length() != 10 )
-        return false;
+        return false ;
     if ( date[ 4 ] != '-' || date[ 7 ] != '-' )
-        return false;
+        return false ;
     for ( size_t i = 0; i < date.length(); ++i )
     {
         if ( !isdigit( date[i] ) && date[i] != '-' ) return false; // wenn andere zeihcen als zaheln oder '-' da sind
     }
 
     int year = std::atoi( date.substr( 0, 4 ).c_str() );
-    if ( year < 0 ) return false;
+    if ( year < 0 ) return false ;
 
     int month = std::atoi( date.substr( 5, 2 ).c_str() );
-    if ( month < 1 || month > 12 ) return false;
+    if ( month < 1 || month > 12 ) return false ;
 
     int day = std::atoi( date.substr( 8, 2 ).c_str() );
-    if ( day < 1 || day > 31 ) return false;
+    if ( day < 1 || day > 31 ) return false ;
+    
+    if ( (month == 4 || month == 6 || month == 9 || month == 11 ) && day > 30 ) return false ;
 
-    return true;
+    if ( month == 2 ) //Schaltjahr case
+    {
+        if ( isLeapYear( year ) )
+        {
+            if ( day > 29 ) return false ;
+        }
+        else
+        {
+            if ( day > 28 ) return false ;
+        }
+    }
+
+    return true ;
 } 
 
 bool validateValue( const std::string& value )
@@ -79,10 +99,10 @@ bool validateValue( const std::string& value )
         begin = 1;
     for ( size_t i = begin; i < value.length(); ++i )
     {
-        if ( !isdigit( value[i] ) && value[i] != '.' ) return false;// wenn andere zeihcen als zaheln oder '.' da sind   
+        if ( !isdigit( value[i] ) && value[i] != '.' ) return false ;// wenn andere zeihcen als zaheln oder '.' da sind   
     }
 
-    return true;
+    return true ;
 }
 
 void    BitcoinExchange::processInput( const std::string& inputFile )
@@ -102,7 +122,13 @@ void    BitcoinExchange::processInput( const std::string& inputFile )
         if ( delim == std::string::npos )
         {
             std::cout << RED << "Error: bad input => " << line << "" << RESET << std::endl;
-            continue;
+            continue ;
+        }
+
+        if ( line.length() < delim + 2 )
+        {
+            std::cout << RED << "Error: bad input => " << line << RESET << std::endl;
+            continue ;
         }
 
         std::string date = line.substr( 0, delim - 1 );
@@ -111,12 +137,12 @@ void    BitcoinExchange::processInput( const std::string& inputFile )
         if ( !validateDate( date ) )
         {
             std::cout << RED << "Error: bad input => " << date << RESET << std::endl;
-            continue;
+            continue ;
         }
         if ( !validateValue( valueStr ) )
         {
             std::cout << RED << "Error: bad input => " << valueStr << RESET << std::endl;
-            continue;
+            continue ;
         }
 
         float value = std::atof( valueStr.c_str() ) ; //conversion?
@@ -134,23 +160,17 @@ void    BitcoinExchange::processInput( const std::string& inputFile )
         //TOD: in database suchen falls date nicht existiert
         //database.lower_bound(date) finds next date
         std::map<std::string, float>::iterator it = _database.lower_bound( date ); //wenn date existiert, dann iterator auf genau diese element gesetzt, wenn nicht, iterator auf den next bigger gesetzt
-        
-        if ( it->first != date )
+
+        if ( it == _database.begin() && it->first != date )
+        {
+            std::cout << RED << "Error: date too early." << RESET << std::endl;
+            continue ;
+        }
+
+        if ( it == _database.end() || it->first != date ) //falls iterator das letzte element ist it-- damit auf das letzte valide element zeigt; und wenn date nicht gefunden wurde it-- um auf kleineres zu zeigen
             it--;
-        
-        std::cout << GREEN << "====DEGUB===" << RESET<<  std::endl;
-        // std::cout << "====DEGUB===; " << date << "; it = " << it->first << std::endl;
-        
-        // std::cout <<BLUE<< "Gesuchtes Date: " << RESET << date << std::endl;
 
-        // if ( it == _database.end() )
-        //     std::cout << "lower_bound result: END (Kein Datum >= gesucht gefunden)" << std::endl;
-        // else
-        //     std::cout << "lower_bound result: " << it->first << " (Preis: " << it->second << ")" << std::endl;
-
-        // if ( it == _database.begin() )
-        //     std::cout <<"Iterator is at beginning of map! " << std::endl;
-        std::cout << date << " => " << value << " = " << "umrechung" << std::endl;
+        std::cout << date << " => " << value << " = " << (value * it->second) << std::endl;
     }
     file.close();
 }
