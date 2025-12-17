@@ -38,21 +38,25 @@ int RPN::calc( const std::string &input )
             continue ;
         else
         {
-            if ( stack.size() < 2 )
+            if ( stack.size() < 2 ) //wenn in stack weniger als 2 zahlen in stack  "1 -" 
             {
                 std::cerr << RED << "Error: bad input." << RESET << std::endl;
                 return -1;
             }
-            int second = stack.top();
+            
+            long second = stack.top(); // long statt int weil int konveritert value um in bounds zu bleiben 
             stack.pop();
-            int first = stack.top();
+            long first = stack.top();
             stack.pop();
+            
+            long result = 0;
+            
             if ( input[ i ] == '+' )
-                stack.push( first +second );
+                result =  first + second;
             else if ( input[ i ] == '-' )
-                stack.push( first - second );
+                result =  first - second;
             else if ( input[ i ] == '*' )
-                stack.push( first * second );
+                result =  first * second;
             else if ( input[ i ] == '/' )
             {
                 if ( second == 0 )
@@ -60,16 +64,26 @@ int RPN::calc( const std::string &input )
                     std::cerr << RED << "Error: bad input." << RESET << std::endl;
                     return -1;
                 }
-                stack.push( first /second );
+                result =  first /second;
             }
+
+            if ( result > INT_MAX || result < INT_MIN )
+            {
+                std::cerr << RED << "Error: result too large." << RESET << std::endl;
+                return -1;
+            }
+            
+            stack.push( ( int )result );
         }
     }
-    if ( stack.size() > 1 )
+    
+    if ( stack.size() > 1 ) // "1 1" kein operator
     {
         std::cerr << RED << "Error: bad input." << RESET << std::endl;
         return -1;
     }
-    if ( stack.top() > )
+    
     std::cout << stack.top() << std::endl;
+    
     return 0;
 }   

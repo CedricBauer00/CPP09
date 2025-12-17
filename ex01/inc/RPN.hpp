@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stack>
 #include <exception>
+#include <climits>
 
 #define RED  "\033[31m"
 #define ELEC_RED "\033[38;2;255;20;20m"
