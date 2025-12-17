@@ -50,36 +50,59 @@ BitcoinExchange::~BitcoinExchange()
 
 bool validateDate( const std::string& date )
 {
-    for ( size_t i = 0; i < date.length(); ++i )
-    {
-        if ( !isdigit( date[i] ) || date[i] != '-' ) // wenn andere zeihcen als zaheln oder '-' da sind
-        {
-            std::cout << "Invalid date!" << std::endl; // oder exception werfen   
-            return ;
-        }
-    }
     if ( date.length() != 10 )
         return false;
-    if ( date[3] != '-' && date[6] != '-' )
+    if ( date[ 4 ] != '-' || date[ 7 ] != '-' )
         return false;
-    std::string month = date.substr( 6, 7 );
-    // in int umwandeln und dann checken ob month>0 && month < 13
-    std::string day = date.substr( 8, 9 )
-    // in int umwandeln und dann checken ob day > 0 && day < 32
+    for ( size_t i = 0; i < date.length(); ++i )
+    {
+        if ( !isdigit( date[i] ) && date[i] != '-' ) // wenn andere zeihcen als zaheln oder '-' da sind
+        {
+            std::cout << "Error: Bad input!" << std::endl; // oder exception werfen   
+            return false;
+        }
+    }
 
+    int year = std::atoi( date.substr( 0, 4 ).c_str() );
+    if ( year < 0 ) return false;
+
+    int month = std::atoi( date.substr( 5, 2 ).c_str() );
+    if ( month < 1 || month > 12 ) return false;
+
+    int day = std::atoi( date.substr( 8, 2 ).c_str() );
+    if ( day < 1 || day > 31 ) return false;
+    // in int umwandeln und dann checken ob month>0 && month < 13
+    // in int umwandeln und dann checken ob day > 0 && day < 32
+    return true;
 } 
 
 bool validateValue( const std::string& value )
 {
-    for ( size_t i = 0; i < value.length(); ++i )
+    int begin = 0;
+
+    if ( value[0] == '-' )
+        begin = 1;
+    for ( size_t i = begin; i < value.length(); ++i )
     {
-        if ( !(value[i] >= '0' && value[i] <= '9') ||  value[i] == '.') // wenn andere zeihcen als zaheln oder '.' da sind
+        if ( !isdigit( value[i] ) && value[i] != '.' ) // wenn andere zeihcen als zaheln oder '.' da sind
         {
-            std::cout << "Invalid value!" << std::endl; // oder exception werfen   
-            return ;
+            std::cout << "Error: Bad input!" << std::endl; // oder exception werfen   
+            return false;
         }
     }
-    //in int convertieren und checken ob zwischen 0 und 1000 ist... 
+
+    int intValue = std::atoi( value.c_str() );
+    if ( intValue < 0 )
+    {
+        std::cout << "\033[31mValue too small!\033[0m" << std::endl;//in int convertieren und checken ob zwischen 0 und 1000 ist... 
+        return false;
+    }
+    else if ( intValue > 1000 )
+    {
+        std::cout << "\033[31mValue too big!\033[0m" << std::endl;//in int convertieren und checken ob zwischen 0 und 1000 ist... 
+        return false;
+    }
+    return true;
 }
 
 void    BitcoinExchange::processInput( const std::string& inputFile )
@@ -95,7 +118,7 @@ void    BitcoinExchange::processInput( const std::string& inputFile )
      
     while ( std::getline( file, line ) )
     {
-        size_t delim = inputFile.find( '|' );
+        size_t delim = line.find( '|' );
         if ( delim == std::string::npos )
         {
             std::cout << "\033[31mError: bad input => " << line << std::endl;
@@ -105,8 +128,9 @@ void    BitcoinExchange::processInput( const std::string& inputFile )
         std::string date = line.substr( 0, delim - 1 );
         std::string valueStr = line.substr( delim + 2 );
         if ( !validateDate( date ) ) //TODO: validate date
-        
-        if ( !valdiateValue( valueStr ) ) //TODO: validate valueStr - vor conversion validieren
+            continue;
+        if ( !validateValue( valueStr ) ) //TODO: validate valueStr - vor conversion validieren
+            continue;
         float value = std::atof( valueStr.c_str() ) ; //conversion?
         //TOD: in database suchen
         //database.lower_bound(date) finds next date
