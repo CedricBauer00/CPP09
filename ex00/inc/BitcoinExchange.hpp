@@ -22,7 +22,6 @@ private:
     std::map<std::string, float> _database;
 public:
     BitcoinExchange();
-    BitcoinExchange( const std::string& inputData );
     BitcoinExchange( const BitcoinExchange& copy );
     BitcoinExchange& operator=( const BitcoinExchange& copy );
     ~BitcoinExchange();

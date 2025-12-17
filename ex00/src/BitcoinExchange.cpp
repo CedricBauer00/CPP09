@@ -2,14 +2,9 @@
 
 BitcoinExchange::BitcoinExchange()
 {
-    std::cout << GREEN << "Default Bitcoin constructor. Database is empty!" << RESET << std::endl;
-}
-
-BitcoinExchange::BitcoinExchange( const std::string& inputData )
-{
     std::cout << GREEN << "Bitcoin Constructor!" << RESET << std::endl;
-   
-    std::ifstream file( inputData.c_str() ); //c_str wandelt c++ string (std::string) in const char* um, brauchen wir fuer std::atof() - erwaratet string der mit '\0' endet
+    
+    std::ifstream file( "data.csv" ); //c_str wandelt c++ string (std::string) in const char* um, brauchen wir fuer std::atof() - erwaratet string der mit '\0' endet
     
     if ( !file.is_open() )
         throw std::runtime_error("Could not open file!");
