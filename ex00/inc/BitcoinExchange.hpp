@@ -1,8 +1,11 @@
+#pragma once
+
 #include <iostream>
 #include <string>
 #include <map> 
 #include <fstream>
 #include <cstdlib>
+#include <exception>
 
 #define RED  "\033[31m"
 #define ELEC_RED "\033[38;2;255;20;20m"

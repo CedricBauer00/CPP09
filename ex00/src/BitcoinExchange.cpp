@@ -4,7 +4,7 @@ BitcoinExchange::BitcoinExchange()
 {
     std::cout << GREEN << "Bitcoin Constructor!" << RESET << std::endl;
     
-    std::ifstream file( "data.csv" ); //c_str wandelt c++ string (std::string) in const char* um, brauchen wir fuer std::atof() - erwaratet string der mit '\0' endet
+    std::ifstream file( "CSV/data.csv" ); //c_str wandelt c++ string (std::string) in const char* um, brauchen wir fuer std::atof() - erwaratet string der mit '\0' endet
     
     if ( !file.is_open() )
         throw std::runtime_error("Could not open file!");
@@ -140,7 +140,7 @@ void    BitcoinExchange::processInput( const std::string& inputFile )
             continue ;
         }
 
-        float value = std::atof( valueStr.c_str() ) ; //conversion?
+        float value = std::atof( valueStr.c_str() ) ;
         if ( value < 0 )
         {
             std::cout << RED << "Error: not a positive number." << RESET << std::endl;//in int convertieren und checken ob zwischen 0 und 1000 ist... 
@@ -152,8 +152,6 @@ void    BitcoinExchange::processInput( const std::string& inputFile )
             continue ;
         }
 
-        //TOD: in database suchen falls date nicht existiert
-        //database.lower_bound(date) finds next date
         std::map<std::string, float>::iterator it = _database.lower_bound( date ); //wenn date existiert, dann iterator auf genau diese element gesetzt, wenn nicht, iterator auf den next bigger gesetzt
 
         if ( it == _database.begin() && it->first != date )

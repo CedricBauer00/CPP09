@@ -2,11 +2,18 @@
 
 int main( int argc, char **argv )
 {
-    if ( argc == 2 )
+    try
     {
-        std::cout << "Hello\rhere!" << std::endl;
-        BitcoinExchange data;
-        data.processInput( argv[1] );
+        if ( argc == 2 )
+        {
+            std::cout << "Hello\rhere!" << std::endl;
+            BitcoinExchange data;
+            data.processInput( argv[1] );
+        }
+    }
+    catch( std::exception &e )
+    {
+        std::cout << e.what() << std::endl;
     }
     return 0;
 }
