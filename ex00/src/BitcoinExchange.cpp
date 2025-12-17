@@ -2,12 +2,12 @@
 
 BitcoinExchange::BitcoinExchange()
 {
-    std::cout << "Default Bitcoin constructor. Database is empty!" << std::endl;
+    std::cout << GREEN << "Default Bitcoin constructor. Database is empty!" << RESET << std::endl;
 }
 
 BitcoinExchange::BitcoinExchange( const std::string& inputData )
 {
-    std::cout << "\033[32mBitcoin Constructor!\033[0m" << std::endl;
+    std::cout << GREEN << "Bitcoin Constructor!" << RESET << std::endl;
     std::ifstream file( inputData.c_str() ); //c_str wandelt c++ string (std::string) in const char* um, brauchen wir fuer std::atof() - erwaratet string der mit '\0' endet
     if ( !file.is_open() )
     {
@@ -30,7 +30,7 @@ BitcoinExchange::BitcoinExchange( const std::string& inputData )
 
 BitcoinExchange::BitcoinExchange( const BitcoinExchange& copy )
 {
-    std::cout << "Bitcoin copy constructor called!" << std::endl;
+    std::cout << GREEN << "Bitcoin copy constructor called!" << RESET << std::endl;
     *this = copy;
 }
 
@@ -45,7 +45,7 @@ BitcoinExchange& BitcoinExchange::operator=( const BitcoinExchange& copy )
 
 BitcoinExchange::~BitcoinExchange()
 {
-    std::cout << "\033[31mbitcoin Destructor!\033[0m" << std::endl;
+    std::cout << RED << "Bitcoin Destructor!" << RESET << std::endl;
 }
 
 bool validateDate( const std::string& date )
@@ -56,11 +56,7 @@ bool validateDate( const std::string& date )
         return false;
     for ( size_t i = 0; i < date.length(); ++i )
     {
-        if ( !isdigit( date[i] ) && date[i] != '-' ) // wenn andere zeihcen als zaheln oder '-' da sind
-        {
-            std::cout << "Error: Bad input!" << std::endl; // oder exception werfen   
-            return false;
-        }
+        if ( !isdigit( date[i] ) && date[i] != '-' ) return false; // wenn andere zeihcen als zaheln oder '-' da sind
     }
 
     int year = std::atoi( date.substr( 0, 4 ).c_str() );
@@ -71,8 +67,7 @@ bool validateDate( const std::string& date )
 
     int day = std::atoi( date.substr( 8, 2 ).c_str() );
     if ( day < 1 || day > 31 ) return false;
-    // in int umwandeln und dann checken ob month>0 && month < 13
-    // in int umwandeln und dann checken ob day > 0 && day < 32
+
     return true;
 } 
 
@@ -84,24 +79,9 @@ bool validateValue( const std::string& value )
         begin = 1;
     for ( size_t i = begin; i < value.length(); ++i )
     {
-        if ( !isdigit( value[i] ) && value[i] != '.' ) // wenn andere zeihcen als zaheln oder '.' da sind
-        {
-            std::cout << "Error: Bad input!" << std::endl; // oder exception werfen   
-            return false;
-        }
+        if ( !isdigit( value[i] ) && value[i] != '.' ) return false;// wenn andere zeihcen als zaheln oder '.' da sind   
     }
 
-    int intValue = std::atoi( value.c_str() );
-    if ( intValue < 0 )
-    {
-        std::cout << "\033[31mValue too small!\033[0m" << std::endl;//in int convertieren und checken ob zwischen 0 und 1000 ist... 
-        return false;
-    }
-    else if ( intValue > 1000 )
-    {
-        std::cout << "\033[31mValue too big!\033[0m" << std::endl;//in int convertieren und checken ob zwischen 0 und 1000 ist... 
-        return false;
-    }
     return true;
 }
 
@@ -110,7 +90,7 @@ void    BitcoinExchange::processInput( const std::string& inputFile )
     std::ifstream file( inputFile.c_str() );
     if ( !file.is_open() )
     {
-        std::cout << "Error: cannot open file!" << std::endl;
+        std::cout << RED << "Error: could not open file." << RESET << std::endl;
         return ;
     }
     std::string line;
@@ -121,20 +101,40 @@ void    BitcoinExchange::processInput( const std::string& inputFile )
         size_t delim = line.find( '|' );
         if ( delim == std::string::npos )
         {
-            std::cout << "\033[31mError: bad input => " << line << std::endl;
+            std::cout << RED << "Error: bad input => " << line << "" << RESET << std::endl;
             continue;
         }
 
         std::string date = line.substr( 0, delim - 1 );
         std::string valueStr = line.substr( delim + 2 );
-        if ( !validateDate( date ) ) //TODO: validate date
+
+        if ( !validateDate( date ) )
+        {
+            std::cout << RED << "Error: bad input => " << date << RESET << std::endl;
             continue;
-        if ( !validateValue( valueStr ) ) //TODO: validate valueStr - vor conversion validieren
+        }
+        if ( !validateValue( valueStr ) )
+        {
+            std::cout << RED << "Error: bad input => " << valueStr << RESET << std::endl;
             continue;
+        }
+
         float value = std::atof( valueStr.c_str() ) ; //conversion?
-        //TOD: in database suchen
+        if ( value < 0 )
+        {
+            std::cout << RED << "Error: not a positive number." << RESET << std::endl;//in int convertieren und checken ob zwischen 0 und 1000 ist... 
+            continue ;
+        }
+        else if ( value > 1000 )
+        {
+            std::cout << RED << "Error: too large number." << RESET << std::endl;//in int convertieren und checken ob zwischen 0 und 1000 ist... 
+            continue ;
+        }
+        //TOD: in database suchen falls date nicht existiert
         //database.lower_bound(date) finds next date
-        std::cout << date << " => " << value << " = " << "???" << std::endl;
+        // std::cout << "???" << std::endl;
+
+        std::cout << date << " => " << value << " = " << "umrechung" << std::endl;
     }
     file.close();
 }

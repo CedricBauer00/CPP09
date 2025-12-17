@@ -4,8 +4,9 @@ int main( int argc, char **argv )
 {
     if ( argc == 2 )
     {
-        BitcoinExchange data("data.csv");
         std::cout << "Hello\rhere!" << std::endl;
+        BitcoinExchange data("data.csv");
+        data.processInput( argv[1] );
         // std::map<std::string, float> btcPrices;
         // btcPrices["2022-01-01"] = 46000.50;
         
