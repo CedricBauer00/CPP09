@@ -130,10 +130,26 @@ void    BitcoinExchange::processInput( const std::string& inputFile )
             std::cout << RED << "Error: too large number." << RESET << std::endl;//in int convertieren und checken ob zwischen 0 und 1000 ist... 
             continue ;
         }
+
         //TOD: in database suchen falls date nicht existiert
         //database.lower_bound(date) finds next date
-        // std::cout << "???" << std::endl;
+        std::map<std::string, float>::iterator it = _database.lower_bound( date ); //wenn date existiert, dann iterator auf genau diese element gesetzt, wenn nicht, iterator auf den next bigger gesetzt
+        
+        if ( it->first != date )
+            it--;
+        
+        std::cout << GREEN << "====DEGUB===" << RESET<<  std::endl;
+        // std::cout << "====DEGUB===; " << date << "; it = " << it->first << std::endl;
+        
+        // std::cout <<BLUE<< "Gesuchtes Date: " << RESET << date << std::endl;
 
+        // if ( it == _database.end() )
+        //     std::cout << "lower_bound result: END (Kein Datum >= gesucht gefunden)" << std::endl;
+        // else
+        //     std::cout << "lower_bound result: " << it->first << " (Preis: " << it->second << ")" << std::endl;
+
+        // if ( it == _database.begin() )
+        //     std::cout <<"Iterator is at beginning of map! " << std::endl;
         std::cout << date << " => " << value << " = " << "umrechung" << std::endl;
     }
     file.close();
