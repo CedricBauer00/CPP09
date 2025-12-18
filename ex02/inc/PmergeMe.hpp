@@ -22,6 +22,8 @@ public:
     PmergeMe( const PmergeMe &copy );
     PmergeMe& operator=( const PmergeMe &copy );
     ~PmergeMe();
+
+    int    merge( const int argc, char **argv ); //konnte nicht const char **argv machen, warum?
 };
 
 // handles positive range of integers
