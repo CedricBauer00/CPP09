@@ -15,15 +15,16 @@
 
 class PmergeMe
 {
-private:
-    
-public:
-    PmergeMe();
-    PmergeMe( const PmergeMe &copy );
-    PmergeMe& operator=( const PmergeMe &copy );
-    ~PmergeMe();
+    private:
+        std::list<int> l;
+        std::vector<int> v;
+    public:
+        PmergeMe();
+        PmergeMe( const PmergeMe &copy );
+        PmergeMe& operator=( const PmergeMe &copy );
+        ~PmergeMe();
 
-    int    merge( const int argc, char **argv ); //konnte nicht const char **argv machen, warum?
+        int    merge( const int argc, char **argv ); //konnte nicht const char **argv machen, warum?
 };
 
 // handles positive range of integers

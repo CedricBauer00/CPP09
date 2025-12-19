@@ -10,6 +10,11 @@ PmergeMe::~PmergeMe()
     std::cout << RED << "PmergeMe destrcutor!" << RESET << std::endl;
 }
 
+void    initialise()
+{
+
+}
+
 int sortList()
 {
     return 0;
@@ -32,8 +37,10 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
             std::cerr << RED << "Error: bad input." << ": " << arg[ pos ] << RESET << std::endl;
             return -1;
         }
-
+        this->l.push_back( std::atoi( arg ) );
+        this->v.push_back( arg );
     }
+
 
     {
         if ( !sortList() )// std::list container logic
