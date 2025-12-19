@@ -10,47 +10,71 @@ PmergeMe::~PmergeMe()
     std::cout << RED << "PmergeMe destrcutor!" << RESET << std::endl;
 }
 
-void    initialise()
+int sortListIntoPairs( std::list<int> l )
 {
+    for ( std::list<int>::iterator it = l.begin(); l.begin() != l.end(); ++it )
+    {
+        std::vector<int> pair;
 
-}
-
-int sortList()
-{
+    }
     return 0;
 }
 
 int sortVector()
 {
+    
     return 0;
 }
 
 int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char **argv machen, warum?
 {
+    std::cout << GREEN << "start!" << RESET << std::endl; 
+
     for ( int i = 1; i < argc; ++i )
     {
         std::string arg = argv[ i ]; 
-        size_t pos = arg.find_first_not_of( "0123456789" );
-        
+
+        size_t pos = arg.find_first_not_of( "0123456789 " ); // geht ueber alle args auch "12 23 3 4 5 "
         if ( pos != std::string::npos )
         {
             std::cerr << RED << "Error: bad input." << ": " << arg[ pos ] << RESET << std::endl;
             return -1;
         }
-        this->l.push_back( std::atoi( arg ) );
-        this->v.push_back( arg );
+
+        std::istringstream ss( arg );
+        
+        std::string substr;
+
+        while ( ss >> substr ) // teilt bei space; fuer den case "12 2 3 4 5"
+        {
+            this->l.push_back( std::stoi( substr ) );
+            this->v.push_back( std::stoi( substr ) );
+        }
     }
 
-
     {
-        if ( !sortList() )// std::list container logic
+        if ( !sortListIntoPairs( this->l ) )// std::list container logic
             return -1;
     }
 
     {
-        if ( sortVector() )// std::vector container logic
+        if ( !sortVector() )// std::vector container logic
             return -1;
     }
+
+    std::cout << GREEN << "List: " << RESET << std::endl;
+    for ( std::list<int>::iterator it = l.begin(); it != l.end(); ++it )
+    {
+        std::cout << *it << " ";
+    } 
+    std::cout << std::endl;
+
+    std::cout << GREEN << "Vecotr: " << RESET << std::endl; 
+    for ( std::vector<int>::iterator it = v.begin(); it != v.end(); ++it )
+    {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
 
     std::cout << GREEN << "Done!" << RESET << std::endl; 
     return 0;

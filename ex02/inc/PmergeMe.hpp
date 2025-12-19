@@ -5,6 +5,7 @@
 #include <list>
 #include <iostream>
 #include <exception>
+#include <sstream>
 
 #define RED  "\033[31m"
 #define ELEC_RED "\033[38;2;255;20;20m"
@@ -25,6 +26,8 @@ class PmergeMe
         ~PmergeMe();
 
         int    merge( const int argc, char **argv ); //konnte nicht const char **argv machen, warum?
+        int    sortListIntoPairs();
+        int    sortVectorIntoPairs();
 };
 
 // handles positive range of integers
