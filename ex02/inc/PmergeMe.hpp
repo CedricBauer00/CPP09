@@ -17,19 +17,22 @@
 class PmergeMe
 {
     private:
-        std::list<int> l;
-        std::vector<int> v;
+        std::list<int>      _l;
+        std::vector<int>    _v;
+        int                 _biggestPair;
     public:
         PmergeMe();
         PmergeMe( const PmergeMe &copy );
         PmergeMe& operator=( const PmergeMe &copy );
         ~PmergeMe();
 
-        int    merge( const int argc, char **argv ); //konnte nicht const char **argv machen, warum?
-        int    sortListIntoPairs();
-        int    sortVectorIntoPairs();
-        void   binarySortVector( int value );
-        void   binarySortList( int value );
+        int     merge( const int argc, char **argv ); //konnte nicht const char **argv machen, warum?
+        void    sortListIntoPairs();
+        void    sortVectorIntoPairs();
+        void    insertLogicList();
+        void    insertLogicVector();
+        void    binarySortVector( int value );
+        void    binarySortList( int value );
 };
 
 // handles positive range of integers

@@ -10,7 +10,7 @@ PmergeMe::~PmergeMe()
     std::cout << RED << "PmergeMe destrcutor!" << RESET << std::endl;
 }
 
-int PmergeMe::sortListIntoPairs()
+void    PmergeMe::sortListIntoPairs()
 {
     int pNum = 1;
     size_t pairs = l.size();
@@ -63,28 +63,26 @@ int PmergeMe::sortListIntoPairs()
         pNum *= 2;
         pairs /= 2;
     }
-
-    return 0;
+    _biggestPair = pNum /= 2; //weil pNum ist schon bei size von nur noch einem pair, was die loop beendet
 }
 
-int PmergeMe::sortVectorIntoPairs()
+void    PmergeMe::sortVectorIntoPairs()
 {
     int pNum = 1;
-    size_t pairs = v.size();
+    size_t pairs = _v.size();
 
     while ( pairs > 1 )
     { // pNum = 1; i =0;  pNum = 2; i = 1; pNum = 4; i = 3; 8 7; 16; 15 
-        for ( size_t i = pNum - 1; i + pNum < v.size(); i += 2 * pNum )
+        for ( size_t i = pNum - 1 ; i + pNum < _v.size(); i += 2 * pNum )
         {
-            if ( v[ i ]  > v[ i + pNum ] )
+            if ( _v[ i ]  > _v[ i + pNum ] )
             {
                 for ( int j = 0; j < pNum; ++j )
                 {
-                    std::swap( v[ i - j ], v[ i + pNum - j ] );
+                    std::swap( _v[ i - j ], _v[ i + pNum - j ] );
                 }
             }
         }
-        
         // for ( std::vector<int>::iterator it = v.begin(); it != v.end(); ++it )
         // {
         //     std::cout << *it << " ";
@@ -93,12 +91,7 @@ int PmergeMe::sortVectorIntoPairs()
         pNum *= 2;
         pairs /= 2;
     }
-
-
-
-    std::cout << "Here" << std::endl;
-
-    return 0;
+    _biggestPair = pNum /= 2; //weil pNum ist schon bei size von nur noch einem pair, was die loop beendet
 }
 
 void    PmergeMe::binarySortVector( int value )
@@ -159,6 +152,64 @@ void    PmergeMe::binarySortList( int value )
     l.insert( start, value );
 }
 
+void    PmergeMe::insertLogicList()
+{
+    
+}
+
+void    PmergeMe::insertLogicVector()
+{
+    std::vector<std::vector<int>>   main;
+    std::vector<std::vector<int>>   pend;
+    std::vector<std::string>        labelPend;
+    std::vector<std::string>        labelMain;
+    while ( _biggestPair > 0 )
+    {
+        int m_index = 0;
+        int p_index = 0;
+        
+        for ( int i = 0; i < _v.size(); i += _biggestPair )
+        {
+            
+            for ( int j = 0; j < _biggestPair; ++j )
+            {
+                if ( i / _biggestPair == 0 ) // immer nur beim ersten mal - condition fuer i = 0 
+                {
+                    main[ m_index ][ j ] = _v[ i + j ];
+                    
+                    if ( j % _biggestPair == _biggestPair - 1 ) // um nur einmal zu machn - geht nur rein bei letzter iteration von einem Pair
+                    {
+                        ++m_index;
+                        labelMain.push_back( "b1" );
+                    } 
+                }
+                else if ( i / _biggestPair % 2 == 1 )
+                {
+                    main[ m_index ][ j ] = _v[ i + j ];
+                    
+                    if ( j % _biggestPair == _biggestPair - 1 )
+                    {
+                        ++m_index;
+                        labelMain.push_back( "a" + std::to_string( m_index ) );
+                    }
+                }
+                else if ( i / _biggestPair % 2 == 0)
+                {
+                    pend[ p_index ][ j ] = _v[ i + j ];
+                    
+                    if ( j % _biggestPair == _biggestPair -1 )
+                    {
+                        ++p_index;
+                        labelMain.push_back( "b" + std::to_string( p_index ) );
+                    }
+                }
+            }
+        }
+
+        _biggestPair /= 2;
+    }
+}
+
 int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char **argv machen, warum?
 {
     std::cout << GREEN << "start!" << RESET << std::endl; 
@@ -186,13 +237,15 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
     }
 
     {
-        if ( sortListIntoPairs() != 0 )
-            return -1;// std::list container logic
+        sortListIntoPairs(); //std::list container logic
+        insertLogicList();
+
     }
 
     {
-        if ( sortVectorIntoPairs() != 0 )
-            return -1;// std::vector container logic
+        sortVectorIntoPairs(); // std::vector container logic
+        insertLogicVector();
+
     }
 
     binarySortVector( 6 ); // falls wir value schon haben den wir einsortieren wollen
