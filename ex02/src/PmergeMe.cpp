@@ -24,9 +24,10 @@ int PmergeMe::sortListIntoPairs()
         {
             ++it; //getting end of first pair compononent
         }
+
         while ( it != l.end() )
         {
-            // std::list<int>::iterator frst = it;
+            std::list<int>::iterator first = it;
             std::list<int>::iterator sec = it;
 
             for ( int i = 0; i < pNum && sec != l.end(); ++i )
@@ -37,44 +38,61 @@ int PmergeMe::sortListIntoPairs()
             {
                 break;
             }
-            if ( *it > *sec )
+            if ( *first > *sec )
             {
                 for ( int i = 0; i < pNum; ++i )
                 {
-                    st::swap( *it - i, *sec - i);
+                    std::iter_swap( first, sec );
+                    --first;
+                    --sec;
                 }
             }
+            for ( int i = 0; i < 2 * pNum && it != l.end(); ++i )
+            {
+                ++it;
+            }
+            
+            // auto b = l.begin();
+            // while ( b != l.end() )
+            // {
+            //     std::cout << ELEC_RED << *b << " " << RESET;
+            //     ++b;
+            // }
+            // std::cout << std::endl;
         }
-        for ( int i = pNum - 1; i + pNum < l.size(); i += 2 * pNum )
-        {
-
-        }
+        pNum *= 2;
+        pairs /= 2;
     }
-    std::cout << "Here1" << std::endl;
+
     return 0;
 }
 
-// int PmergeMe::sortVectorIntoPairs()
-// {
-//     int pNum = 1;
-//     size_t pairs = v.size();
+int PmergeMe::sortVectorIntoPairs()
+{
+    int pNum = 1;
+    size_t pairs = v.size();
 
-//     while ( pairs > 1 )
-//     { // pNum = 1; i =0;  pNum = 2; i = 1; pNum = 4; i = 3; 8 7; 16; 15 
-//         for ( size_t i = pNum - 1; i + pNum < v.size(); i += 2 * pNum )
-//         {
-//             if ( v[ i ]  > v[ i + pNum ] )
-//             {
-//                 for ( int j = 0; j < pNum; ++j )
-//                 {
-//                     std::swap( v[ i - j ], v[ i + pNum - j ] );
-//                 }
-//             }
-//         }
-
-//         pNum *= 2;
-//         pairs /= 2;
-//     }
+    while ( pairs > 1 )
+    { // pNum = 1; i =0;  pNum = 2; i = 1; pNum = 4; i = 3; 8 7; 16; 15 
+        for ( size_t i = pNum - 1; i + pNum < v.size(); i += 2 * pNum )
+        {
+            if ( v[ i ]  > v[ i + pNum ] )
+            {
+                for ( int j = 0; j < pNum; ++j )
+                {
+                    std::swap( v[ i - j ], v[ i + pNum - j ] );
+                }
+            }
+        }
+        
+        // for ( std::vector<int>::iterator it = v.begin(); it != v.end(); ++it )
+        // {
+        //     std::cout << *it << " ";
+        // }
+        // std::cout << std::endl;
+        pNum *= 2;
+        pairs /= 2;
+    }
 
 
 
@@ -115,7 +133,7 @@ void    PmergeMe::binarySortVector( int value )
     // std::cout << ELEC_RED << "Insert position: " << ( start - v.begin() ) << ORANGE << " next bigger value: " << *start << RESET << std::endl;
     v.insert( start, value );
 }
-//  1 2 5 7 11 24 44 66
+
 void    PmergeMe::binarySortList( int value )
 {
     std::list<int>::iterator start = l.begin();
