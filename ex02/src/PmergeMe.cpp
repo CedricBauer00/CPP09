@@ -12,18 +12,72 @@ PmergeMe::~PmergeMe()
 
 int PmergeMe::sortListIntoPairs()
 {
-    // for ( std::list<int>::iterator it = l.begin(); l.begin() != l.end(); ++it )
-    // {
-    //     std::vector<int> pair;
+    int pNum = 1;
+    size_t pairs = l.size();
 
-    // }
+    
+    while ( pairs > 1 )
+    {
+        std::list<int>::iterator it = l.begin();
+
+        for ( int i = 1; i < pNum && it != l.end(); ++i ) // i = 1 weil iterator auch bei index 1 startet
+        {
+            ++it; //getting end of first pair compononent
+        }
+        while ( it != l.end() )
+        {
+            // std::list<int>::iterator frst = it;
+            std::list<int>::iterator sec = it;
+
+            for ( int i = 0; i < pNum && sec != l.end(); ++i )
+            {
+                ++sec;
+            }
+            if ( sec == l.end() )
+            {
+                break;
+            }
+            if ( *it > *sec )
+            {
+                for ( int i = 0; i < pNum; ++i )
+                {
+                    st::swap( *it - i, *sec - i);
+                }
+            }
+        }
+        for ( int i = pNum - 1; i + pNum < l.size(); i += 2 * pNum )
+        {
+
+        }
+    }
     std::cout << "Here1" << std::endl;
     return 0;
 }
 
-int PmergeMe::sortVectorIntoPairs()
-{
-    
+// int PmergeMe::sortVectorIntoPairs()
+// {
+//     int pNum = 1;
+//     size_t pairs = v.size();
+
+//     while ( pairs > 1 )
+//     { // pNum = 1; i =0;  pNum = 2; i = 1; pNum = 4; i = 3; 8 7; 16; 15 
+//         for ( size_t i = pNum - 1; i + pNum < v.size(); i += 2 * pNum )
+//         {
+//             if ( v[ i ]  > v[ i + pNum ] )
+//             {
+//                 for ( int j = 0; j < pNum; ++j )
+//                 {
+//                     std::swap( v[ i - j ], v[ i + pNum - j ] );
+//                 }
+//             }
+//         }
+
+//         pNum *= 2;
+//         pairs /= 2;
+//     }
+
+
+
     std::cout << "Here" << std::endl;
 
     return 0;
@@ -36,7 +90,6 @@ void    PmergeMe::binarySortVector( int value )
 
     std::vector<int>::iterator start = v.begin();
     std::vector<int>::iterator end = v.end();
-    std::vector<int>::iterator mid;
 
     while ( start != end ) // solange searching area nicht leer ist
     {
@@ -44,7 +97,7 @@ void    PmergeMe::binarySortVector( int value )
         // std::cout << RED << "end value: " << *(end - 1) << RED << std::endl;
         
         // getting middle iterator
-        mid = start + ( end - start ) / 2;
+        std::vector<int>::iterator mid = start + ( end - start ) / 2;
         // std::cout << BLUE << "mid: " << *mid << RESET << std::endl;
 
         if ( *mid < value ) // wenn in der linken haelfte liegt 
@@ -80,7 +133,7 @@ void    PmergeMe::binarySortList( int value )
             start = mid;
             ++start;
         }
-        else //bei in linker seite muss end = mid;
+        else //bei in linker seite muss end = mid;6
         {
             end = mid;
         }
