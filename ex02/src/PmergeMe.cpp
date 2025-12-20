@@ -17,12 +17,55 @@ int PmergeMe::sortListIntoPairs()
     //     std::vector<int> pair;
 
     // }
+    std::cout << "Here1" << std::endl;
     return 0;
 }
 
 int PmergeMe::sortVectorIntoPairs()
 {
     
+    std::cout << "Here" << std::endl;
+
+    return 0;
+}
+
+int PmergeMe::binarySort( int value )
+{
+    std::cout << "Value to look for: " << value << std::endl;
+    std::cout << "size of v: " << v.size() << std::endl;
+
+    std::vector<int>::iterator start = v.begin();
+    std::vector<int>::iterator end = v.end();
+    std::vector<int>::iterator mid;
+
+    while ( start != end ) // solange searching area nicht leer ist
+    {
+        std::cout << "start: " << *start << std::endl;
+        std::cout << "end: " << *end << std::endl;
+        // std::cout << "end value: " << *(end - 1) << std::endl;
+
+        // just printing
+        size_t dist = ( *start - *end ) / 2;
+        std::cout << "dist von start zu end: " << dist << std::endl;
+        
+        // getting middle iterator
+        mid = start + ( start - end ) / 2;
+        std::cout << "mid: " << *mid << std::endl;
+        // std::cout << "mid: " << mid << std::endl;
+
+
+        if ( *mid < value ) // wenn in der linken haelfte liegt 
+        {
+            start = mid + 1; // neue border
+            std::cout << "in der rechten seite!" << std::endl;
+        }
+        else
+        {
+            end = mid;
+            std::cout << "in der Linken seite!" << std::endl;
+        }
+        break;
+    }
     return 0;
 }
 
@@ -53,12 +96,12 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
     }
 
     {
-        if ( !sortListIntoPairs() )
+        if ( sortListIntoPairs() != 0 )
             return -1;// std::list container logic
     }
 
     {
-        if ( !sortVectorIntoPairs() )
+        if ( sortVectorIntoPairs() != 0 )
             return -1;// std::vector container logic
     }
 
@@ -75,6 +118,8 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
         std::cout << *it << " ";
     }
     std::cout << std::endl;
+
+    binarySort( 6 );
 
     std::cout << GREEN << "Done!" << RESET << std::endl; 
     return 0;
