@@ -28,7 +28,8 @@ class PmergeMe
         int    merge( const int argc, char **argv ); //konnte nicht const char **argv machen, warum?
         int    sortListIntoPairs();
         int    sortVectorIntoPairs();
-        int    binarySort( int value );
+        void   binarySortVector( int value );
+        void   binarySortList( int value );
 };
 
 // handles positive range of integers

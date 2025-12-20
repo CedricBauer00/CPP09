@@ -29,10 +29,10 @@ int PmergeMe::sortVectorIntoPairs()
     return 0;
 }
 
-int PmergeMe::binarySort( int value )
+void    PmergeMe::binarySortVector( int value )
 {
-    std::cout << "Value to look for: " << value << std::endl;
-    std::cout << "size of v: " << v.size() << std::endl;
+    // std::cout << "Value to look for: " << ORANGE << value << RESET << std::endl;
+    // std::cout << "size of v: " << v.size() << std::endl;
 
     std::vector<int>::iterator start = v.begin();
     std::vector<int>::iterator end = v.end();
@@ -40,33 +40,52 @@ int PmergeMe::binarySort( int value )
 
     while ( start != end ) // solange searching area nicht leer ist
     {
-        std::cout << "start: " << *start << std::endl;
-        std::cout << "end: " << *end << std::endl;
-        // std::cout << "end value: " << *(end - 1) << std::endl;
-
-        // just printing
-        size_t dist = ( *start - *end ) / 2;
-        std::cout << "dist von start zu end: " << dist << std::endl;
+        // std::cout << GREEN <<  "\nstart: " << *start << RESET <<  std::endl;
+        // std::cout << RED << "end value: " << *(end - 1) << RED << std::endl;
         
         // getting middle iterator
-        mid = start + ( start - end ) / 2;
-        std::cout << "mid: " << *mid << std::endl;
-        // std::cout << "mid: " << mid << std::endl;
-
+        mid = start + ( end - start ) / 2;
+        // std::cout << BLUE << "mid: " << *mid << RESET << std::endl;
 
         if ( *mid < value ) // wenn in der linken haelfte liegt 
         {
             start = mid + 1; // neue border
-            std::cout << "in der rechten seite!" << std::endl;
+            // std::cout << "in der rechten seite!" << std::endl;
         }
         else
         {
             end = mid;
-            std::cout << "in der Linken seite!" << std::endl;
+            // std::cout << "in der Linken seite!" << std::endl;
         }
-        break;
     }
-    return 0;
+    
+    // std::cout << ELEC_RED << "Insert position: " << ( start - v.begin() ) << ORANGE << " next bigger value: " << *start << RESET << std::endl;
+    v.insert( start, value );
+}
+//  1 2 5 7 11 24 44 66
+void    PmergeMe::binarySortList( int value )
+{
+    std::list<int>::iterator start = l.begin();
+    std::list<int>::iterator end = l.end();
+    
+    while ( std::distance( start, end ) > 0) // distance wird immer kleiner, bis 0
+    {
+        size_t dist = std::distance( start, end );
+        
+        std::list<int>::iterator mid = start;
+        std::advance( mid, dist / 2 );
+
+        if ( *mid < value ) // in rechter seite muss start = mid + 1;
+        {
+            start = mid;
+            ++start;
+        }
+        else //bei in linker seite muss end = mid;
+        {
+            end = mid;
+        }
+    }
+    l.insert( start, value );
 }
 
 int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char **argv machen, warum?
@@ -105,6 +124,9 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
             return -1;// std::vector container logic
     }
 
+    binarySortVector( 6 ); // falls wir value schon haben den wir einsortieren wollen
+    binarySortList( 6 );
+
     std::cout << GREEN << "List: " << RESET << std::endl;
     for ( std::list<int>::iterator it = l.begin(); it != l.end(); ++it )
     {
@@ -118,8 +140,6 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
         std::cout << *it << " ";
     }
     std::cout << std::endl;
-
-    binarySort( 6 );
 
     std::cout << GREEN << "Done!" << RESET << std::endl; 
     return 0;
