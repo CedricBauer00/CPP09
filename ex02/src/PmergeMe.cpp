@@ -10,17 +10,17 @@ PmergeMe::~PmergeMe()
     std::cout << RED << "PmergeMe destrcutor!" << RESET << std::endl;
 }
 
-int sortListIntoPairs( std::list<int> l )
+int PmergeMe::sortListIntoPairs()
 {
-    for ( std::list<int>::iterator it = l.begin(); l.begin() != l.end(); ++it )
-    {
-        std::vector<int> pair;
+    // for ( std::list<int>::iterator it = l.begin(); l.begin() != l.end(); ++it )
+    // {
+    //     std::vector<int> pair;
 
-    }
+    // }
     return 0;
 }
 
-int sortVector()
+int PmergeMe::sortVectorIntoPairs()
 {
     
     return 0;
@@ -53,13 +53,13 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
     }
 
     {
-        if ( !sortListIntoPairs( this->l ) )// std::list container logic
-            return -1;
+        if ( !sortListIntoPairs() )
+            return -1;// std::list container logic
     }
 
     {
-        if ( !sortVector() )// std::vector container logic
-            return -1;
+        if ( !sortVectorIntoPairs() )
+            return -1;// std::vector container logic
     }
 
     std::cout << GREEN << "List: " << RESET << std::endl;
