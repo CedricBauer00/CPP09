@@ -19,7 +19,7 @@ class PmergeMe
     private:
         std::list<int>      _l;
         std::vector<int>    _v;
-        int                 _biggestPair;
+        size_t              _biggestPair;
     public:
         PmergeMe();
         PmergeMe( const PmergeMe &copy );

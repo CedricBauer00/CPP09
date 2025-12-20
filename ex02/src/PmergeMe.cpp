@@ -13,28 +13,28 @@ PmergeMe::~PmergeMe()
 void    PmergeMe::sortListIntoPairs()
 {
     int pNum = 1;
-    size_t pairs = l.size();
+    size_t pairs = _l.size();
 
     
     while ( pairs > 1 )
     {
-        std::list<int>::iterator it = l.begin();
+        std::list<int>::iterator it = _l.begin();
 
-        for ( int i = 1; i < pNum && it != l.end(); ++i ) // i = 1 weil iterator auch bei index 1 startet
+        for ( int i = 1; i < pNum && it != _l.end(); ++i ) // i = 1 weil iterator auch bei index 1 startet
         {
             ++it; //getting end of first pair compononent
         }
 
-        while ( it != l.end() )
+        while ( it != _l.end() )
         {
             std::list<int>::iterator first = it;
             std::list<int>::iterator sec = it;
 
-            for ( int i = 0; i < pNum && sec != l.end(); ++i )
+            for ( int i = 0; i < pNum && sec != _l.end(); ++i )
             {
                 ++sec;
             }
-            if ( sec == l.end() )
+            if ( sec == _l.end() )
             {
                 break;
             }
@@ -47,13 +47,13 @@ void    PmergeMe::sortListIntoPairs()
                     --sec;
                 }
             }
-            for ( int i = 0; i < 2 * pNum && it != l.end(); ++i )
+            for ( int i = 0; i < 2 * pNum && it != _l.end(); ++i )
             {
                 ++it;
             }
             
-            // auto b = l.begin();
-            // while ( b != l.end() )
+            // auto b = _l.begin();
+            // while ( b != _l.end() )
             // {
             //     std::cout << ELEC_RED << *b << " " << RESET;
             //     ++b;
@@ -99,8 +99,8 @@ void    PmergeMe::binarySortVector( int value )
     // std::cout << "Value to look for: " << ORANGE << value << RESET << std::endl;
     // std::cout << "size of v: " << v.size() << std::endl;
 
-    std::vector<int>::iterator start = v.begin();
-    std::vector<int>::iterator end = v.end();
+    std::vector<int>::iterator start = _v.begin();
+    std::vector<int>::iterator end = _v.end();
 
     while ( start != end ) // solange searching area nicht leer ist
     {
@@ -123,14 +123,14 @@ void    PmergeMe::binarySortVector( int value )
         }
     }
     
-    // std::cout << ELEC_RED << "Insert position: " << ( start - v.begin() ) << ORANGE << " next bigger value: " << *start << RESET << std::endl;
-    v.insert( start, value );
+    // std::cout << ELEC_RED << "Insert position: " << ( start - _v.begin() ) << ORANGE << " next bigger value: " << *start << RESET << std::endl;
+    _v.insert( start, value );
 }
 
 void    PmergeMe::binarySortList( int value )
 {
-    std::list<int>::iterator start = l.begin();
-    std::list<int>::iterator end = l.end();
+    std::list<int>::iterator start = _l.begin();
+    std::list<int>::iterator end = _l.end();
     
     while ( std::distance( start, end ) > 0) // distance wird immer kleiner, bis 0
     {
@@ -149,7 +149,7 @@ void    PmergeMe::binarySortList( int value )
             end = mid;
         }
     }
-    l.insert( start, value );
+    _l.insert( start, value );
 }
 
 void    PmergeMe::insertLogicList()
@@ -157,25 +157,52 @@ void    PmergeMe::insertLogicList()
     
 }
 
-void    PmergeMe::insertLogicVector()
+void    insertVector(std::vector<std::vector<int>> main, std::vector<std::vector<int>> pend,
+                std::vector<std::string> labelPend, std::vector<std::string> labelMain)
 {
-    std::vector<std::vector<int>>   main;
-    std::vector<std::vector<int>>   pend;
-    std::vector<std::string>        labelPend;
-    std::vector<std::string>        labelMain;
-    while ( _biggestPair > 0 )
+    static size_t jacobCur = 3;
+    static size_t jacobPrev = 1;
+
+    for ( size_t i = 0; i < labelPend.size(); ++i )
     {
-        int m_index = 0;
-        int p_index = 0;
-        
-        for ( int i = 0; i < _v.size(); i += _biggestPair )
+        if ( labelPend[ i ][ 1 ] = jacobCur )
         {
             
-            for ( int j = 0; j < _biggestPair; ++j )
+        }
+    }
+}
+
+void    PmergeMe::insertLogicVector()
+{
+        std::cout << GREEN << "Vecotr: " << RESET << std::endl; 
+    for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
+    {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+
+    while ( _biggestPair > 0 )
+    {
+        std::vector<std::vector<int>>   main; //declaration in loop, to not needing to reinitialise them always
+        std::vector<std::vector<int>>   pend;
+        std::vector<std::string>        labelPend;
+        std::vector<std::string>        labelMain;
+        size_t m_index = 0;
+        size_t p_index = 0;
+
+        for ( size_t i = 0; i < _v.size(); i += _biggestPair )
+        {
+            if ( i + _biggestPair - 1 >= _v.size() )
+                break;
+            for ( size_t j = 0; j < _biggestPair; ++j )
             {
                 if ( i / _biggestPair == 0 ) // immer nur beim ersten mal - condition fuer i = 0 
                 {
-                    main[ m_index ][ j ] = _v[ i + j ];
+                    if ( m_index >= main.size() )
+                    {
+                        main.push_back( std::vector<int>() );
+                    }
+                    main[ m_index ].push_back( _v[ i + j ] );
                     
                     if ( j % _biggestPair == _biggestPair - 1 ) // um nur einmal zu machn - geht nur rein bei letzter iteration von einem Pair
                     {
@@ -185,7 +212,11 @@ void    PmergeMe::insertLogicVector()
                 }
                 else if ( i / _biggestPair % 2 == 1 )
                 {
-                    main[ m_index ][ j ] = _v[ i + j ];
+                    if ( m_index >= main.size() )
+                    {
+                        main.push_back( std::vector<int>() );
+                    }
+                    main[ m_index ].push_back( _v[ i + j ] );
                     
                     if ( j % _biggestPair == _biggestPair - 1 )
                     {
@@ -195,7 +226,11 @@ void    PmergeMe::insertLogicVector()
                 }
                 else if ( i / _biggestPair % 2 == 0)
                 {
-                    pend[ p_index ][ j ] = _v[ i + j ];
+                    if ( p_index >= pend.size() )
+                    {
+                        pend.push_back( std::vector<int>() );
+                    }
+                    pend[ p_index ].push_back( _v[ i + j ] );
                     
                     if ( j % _biggestPair == _biggestPair -1 )
                     {
@@ -204,8 +239,18 @@ void    PmergeMe::insertLogicVector()
                     }
                 }
             }
+            // std::cout << "printing" << std::endl;
+            // for ( size_t i = 0; i < main.size(); ++i)
+            // {
+            //     for ( size_t j = 0; j < main[i].size(); ++j)
+            //     {
+            //         std::cout << main[i][j] << " ";
+            //     }
+            //     std::cout << std::endl;
+            // }
+            // std::cout << std::endl;
         }
-
+        insertVector( Main, Pend, labelMain, labelPend );
         _biggestPair /= 2;
     }
 }
@@ -231,8 +276,8 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
 
         while ( ss >> substr ) // teilt bei space; fuer den case "12 2 3 4 5"
         {
-            this->l.push_back( std::stoi( substr ) );
-            this->v.push_back( std::stoi( substr ) );
+            this->_l.push_back( std::stoi( substr ) );
+            this->_v.push_back( std::stoi( substr ) );
         }
     }
 
@@ -241,6 +286,11 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
         insertLogicList();
 
     }
+for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
+    {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
 
     {
         sortVectorIntoPairs(); // std::vector container logic
@@ -252,14 +302,14 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
     binarySortList( 6 );
 
     std::cout << GREEN << "List: " << RESET << std::endl;
-    for ( std::list<int>::iterator it = l.begin(); it != l.end(); ++it )
+    for ( std::list<int>::iterator it = _l.begin(); it != _l.end(); ++it )
     {
         std::cout << *it << " ";
     } 
     std::cout << std::endl;
 
     std::cout << GREEN << "Vecotr: " << RESET << std::endl; 
-    for ( std::vector<int>::iterator it = v.begin(); it != v.end(); ++it )
+    for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
     {
         std::cout << *it << " ";
     }
