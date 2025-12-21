@@ -41,8 +41,9 @@ class PmergeMe
         void    sortListIntoPairs();
 
         void    initialisingLists();
-
-        void    binarySortList( int value );
+        void    insertList( std::list<std::list<int>> main, std::list<std::list<int>> pend, 
+                    std::list<std::string> labelMain, std::list<std::string> labelPend );
+        int     binarySortList( int value, int boundary, std::list<std::list<int>> main ); // needs rework
 };
 
 // handles positive range of integers

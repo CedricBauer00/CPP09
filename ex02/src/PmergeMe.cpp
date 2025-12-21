@@ -100,31 +100,6 @@ int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vec
     return boundary;    
 }
 
-void    PmergeMe::binarySortList( int value )
-{
-    std::list<int>::iterator start = _l.begin();
-    std::list<int>::iterator end = _l.end();
-    
-    while ( std::distance( start, end ) > 0) // distance wird immer kleiner, bis 0
-    {
-        size_t dist = std::distance( start, end );
-        
-        std::list<int>::iterator mid = start;
-        std::advance( mid, dist / 2 );
-
-        if ( *mid < value ) // in rechter seite muss start = mid + 1;
-        {
-            start = mid;
-            ++start;
-        }
-        else //bei in linker seite muss end = mid;6
-        {
-            end = mid;
-        }
-    }
-    _l.insert( start, value );
-}
-
 int getBoundaryPosV( std::vector<std::string> labelMain, std::string label )
 {
     label[ 0 ] = 'a';
@@ -187,7 +162,7 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
             int boundary = getBoundaryPosV( labelMain, labelPend[ startPos ] );
             // std::cout << "boundary: " << boundary << std::endl;
             
-            int insertPos = binarySortVector( pend[ startPos ][ pend[ startPos ].size() - 1], boundary, main ); //
+            int insertPos = binarySortVector( pend[ startPos ][ pend[ startPos ].size() - 1 ], boundary, main ); // pend[ startPos ][ pend[ startPos ].size() - 1]; pair von pend and element startPos, pair an size von pair -1; letzte von diesem pair
             // std::cout << "insertPos: " << insertPos << std::endl;
             
             main.insert( main.begin() + insertPos, pend[ startPos ] );
@@ -371,7 +346,35 @@ int getBoundaryPosL( std::list<std::string> labelMain, std::string label )
     return i - 1;
 }
 
-void    insertList( std::list<std::list<int>> main, std::list<std::list<int>> pend, 
+int PmergeMe::binarySortList( int value, int boundary, std::list<std::list<int>> main ) // needs rework
+{
+    std::list<std::list<int>>::iterator start = main.begin();
+    std::list<std::list<int>>::iterator end = main.end();
+    std::list<int>::iterator            _biggestPair = start->begin();
+    std::advance( _biggestPair, start->size() - 1);
+    
+    
+    while ( std::distance( start, end ) > 0) // distance wird immer kleiner, bis 0
+    {
+        size_t dist = std::distance( start, end );
+        
+        std::list<int>::iterator mid = start;
+        std::advance( mid, dist / 2 );
+
+        if ( *mid < value ) // in rechter seite muss start = mid + 1;
+        {
+            start = mid;
+            ++start;
+        }
+        else //bei in linker seite muss end = mid;6
+        {
+            end = mid;
+        }
+    }
+    return boundary;
+}
+
+void    PmergeMe::insertList( std::list<std::list<int>> main, std::list<std::list<int>> pend, 
                     std::list<std::string> labelMain, std::list<std::string> labelPend )
 {
     static size_t jacobCur = 3;
@@ -392,9 +395,15 @@ void    insertList( std::list<std::list<int>> main, std::list<std::list<int>> pe
 
         while ( startPos >= 0 )
         {
-            std::list<std::string>::iterator it = labelPend.begin();
-            std::advance( it, startPos );
-            int boundary = getBoundaryPosL( labelMain, *it )
+            std::list<std::string>::iterator itLabelPend = labelPend.begin();
+            std::advance( itLabelPend, startPos );
+            int boundary = getBoundaryPosL( labelMain, *itLabelPend );
+
+            std::list<std::list<int>>::iterator itPend = pend.begin();
+            std::advance( itPend, startPos );
+            std::list<int>::iterator itPairIndex = itPend->begin();
+            std::advance( itPairIndex, itPend->size() - 1);
+            int insertPos = binarySortList( *itPairIndex, boundary, main );
         }
     }
 }
