@@ -10,61 +10,6 @@ PmergeMe::~PmergeMe()
     std::cout << RED << "PmergeMe destrcutor!" << RESET << std::endl;
 }
 
-void    PmergeMe::sortListIntoPairs()
-{
-    int pNum = 1;
-    size_t pairs = _l.size();
-
-    
-    while ( pairs > 1 )
-    {
-        std::list<int>::iterator it = _l.begin();
-
-        for ( int i = 1; i < pNum && it != _l.end(); ++i ) // i = 1 weil iterator auch bei index 1 startet
-        {
-            ++it; //getting end of first pair compononent
-        }
-        while ( it != _l.end() )
-        {
-            std::list<int>::iterator first = it;
-            std::list<int>::iterator sec = it;
-
-            for ( int i = 0; i < pNum && sec != _l.end(); ++i )
-            {
-                ++sec;
-            }
-            if ( sec == _l.end() )
-            {
-                break;
-            }
-            if ( *first > *sec )
-            {
-                for ( int i = 0; i < pNum; ++i )
-                {
-                    std::iter_swap( first, sec );
-                    --first;
-                    --sec;
-                }
-            }
-            for ( int i = 0; i < 2 * pNum && it != _l.end(); ++i )
-            {
-                ++it;
-            }
-            
-            // auto b = _l.begin();
-            // while ( b != _l.end() )
-            // {
-            //     std::cout << ELEC_RED << *b << " " << RESET;
-            //     ++b;
-            // }
-            // std::cout << std::endl;
-        }
-        pNum *= 2;
-        pairs /= 2;
-    }
-    _biggestPair = pNum /= 2; //weil pNum ist schon bei size von nur noch einem pair, was die loop beendet
-}
-
 void    PmergeMe::sortVectorIntoPairs()
 {
     int pNum = 1;
@@ -180,11 +125,6 @@ void    PmergeMe::binarySortList( int value )
     _l.insert( start, value );
 }
 
-void    PmergeMe::insertLogicList()
-{
-    
-}
-
 int getBoundaryPos( std::vector<std::string> labelMain, std::string label )
 {
     label[ 0 ] = 'a';
@@ -270,7 +210,7 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
     appendRemaining( main );
 }
 
-void    PmergeMe::insertLogicVector()
+void    PmergeMe::initialisingVectors()
 {
     //     std::cout << GREEN << "Vecotr: " << RESET << std::endl; 
     // for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
@@ -360,6 +300,66 @@ void    PmergeMe::insertLogicVector()
     }
 }
 
+void    PmergeMe::sortListIntoPairs()
+{
+    int pNum = 1;
+    size_t pairs = _l.size();
+
+    
+    while ( pairs > 1 )
+    {
+        std::list<int>::iterator it = _l.begin();
+
+        for ( int i = 1; i < pNum && it != _l.end(); ++i ) // i = 1 weil iterator auch bei index 1 startet
+        {
+            ++it; //getting end of first pair compononent
+        }
+        while ( it != _l.end() )
+        {
+            std::list<int>::iterator first = it;
+            std::list<int>::iterator sec = it;
+
+            for ( int i = 0; i < pNum && sec != _l.end(); ++i )
+            {
+                ++sec;
+            }
+            if ( sec == _l.end() )
+            {
+                break;
+            }
+            if ( *first > *sec )
+            {
+                for ( int i = 0; i < pNum; ++i )
+                {
+                    std::iter_swap( first, sec );
+                    --first;
+                    --sec;
+                }
+            }
+            for ( int i = 0; i < 2 * pNum && it != _l.end(); ++i )
+            {
+                ++it;
+            }
+            
+            // auto b = _l.begin();
+            // while ( b != _l.end() )
+            // {
+            //     std::cout << ELEC_RED << *b << " " << RESET;
+            //     ++b;
+            // }
+            // std::cout << std::endl;
+        }
+        pNum *= 2;
+        pairs /= 2;
+    }
+    _biggestPair = pNum /= 2; //weil pNum ist schon bei size von nur noch einem pair, was die loop beendet
+}
+
+void    PmergeMe::insertLogicList()
+{
+    
+}
+
 int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char **argv machen, warum?
 {
     std::cout << GREEN << "start!" << RESET << std::endl; 
@@ -389,15 +389,15 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
 
     {
         sortVectorIntoPairs(); // std::vector container logic
-        insertLogicVector();
+        initialisingVectors();
 
     }
 
-    // {
-    //     sortListIntoPairs(); //std::list container logic
-    //     insertLogicList();
+    {
+        sortListIntoPairs(); //std::list container logic
+        insertLogicList();
 
-    // }
+    }
     // for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
     // {
     //     std::cout << *it << " ";

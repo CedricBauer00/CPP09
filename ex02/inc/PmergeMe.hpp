@@ -31,7 +31,7 @@ class PmergeMe
         void    sortListIntoPairs();
         void    sortVectorIntoPairs();
         void    insertLogicList();
-        void    insertLogicVector();
+        void    initialisingVectors();
         void    insertVector( std::vector<std::vector<int>> main, std::vector<std::vector<int>> pend,
                 std::vector<std::string> labelPend, std::vector<std::string> labelMain );
         int     binarySortVector( int value, int boundary, std::vector<std::vector<int>> main );
