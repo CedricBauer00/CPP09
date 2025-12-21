@@ -133,7 +133,7 @@ int getBoundaryPos( std::vector<std::string> labelMain, std::string label )
 
     for ( std::string temp : labelMain )
     {
-        std::cout << "cur_main: "<< temp << std::endl;
+        // std::cout << "cur_main: "<< temp << std::endl;
         if ( temp == label )
         {
             return i;
@@ -144,7 +144,7 @@ int getBoundaryPos( std::vector<std::string> labelMain, std::string label )
     return i - 1;
 }
 
-void    PmergeMe::appendRemaining(std::vector<std::vector<int>> main)
+void    PmergeMe::appendRemainingVector(std::vector<std::vector<int>> main)
 {
     for ( std::vector<int> pairs : main )
     {
@@ -185,29 +185,26 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
         while ( startPos >= 0 ) //durch einzelne elemente durchgehen
         {
             int boundary = getBoundaryPos( labelMain, labelPend[ startPos ] );
-            std::cout << "boundary: " << boundary << std::endl;
+            // std::cout << "boundary: " << boundary << std::endl;
             
             int insertPos = binarySortVector( pend[ startPos ][ pend[ startPos ].size() - 1], boundary, main ); //
-            std::cout << "insertPos: " << insertPos << std::endl;
+            // std::cout << "insertPos: " << insertPos << std::endl;
             
-            std::cout << "here2" << std::endl;
             main.insert( main.begin() + insertPos, pend[ startPos ] );
-            std::cout << "here3" << std::endl;
             labelMain.insert( labelMain.begin() + insertPos, labelPend[ startPos ] );
-            std::cout << "here4" << std::endl;
             
             pend.erase( pend.begin() + startPos );
             labelPend.erase( labelPend.begin() + startPos );
             
             --startPos;
-            std::cout << "startPos: " << startPos << std::endl;
+            // std::cout << "startPos: " << startPos << std::endl;
         }
 
         jacobCur = jacobCur + ( jacobPrev * 2 );
         jacobPrev = jacobCur - ( jacobPrev * 2 );
     }
 
-    appendRemaining( main );
+    appendRemainingVector( main );
 }
 
 void    PmergeMe::initialisingVectors()
@@ -289,12 +286,12 @@ void    PmergeMe::initialisingVectors()
             // }
             // std::cout << std::endl;
         }
-        for (std::string tmp : labelMain ) {
-            std::cout << "maintmp: " << tmp << std::endl;
-        }
-        for (std::string tmp : labelPend ) {
-            std::cout << "pendtmp: " << tmp << std::endl;
-        }
+        // for (std::string tmp : labelMain ) {
+        //     std::cout << "maintmp: " << tmp << std::endl;
+        // }
+        // for (std::string tmp : labelPend ) {
+        //     std::cout << "pendtmp: " << tmp << std::endl;
+        // }
         insertVector( main, pend, labelMain, labelPend );
         _biggestPair /= 2;
     }
@@ -355,14 +352,58 @@ void    PmergeMe::sortListIntoPairs()
     _biggestPair = pNum /= 2; //weil pNum ist schon bei size von nur noch einem pair, was die loop beendet
 }
 
-void    PmergeMe::insertLogicList()
+void    PmergeMe::initialisingLists()
 {
-    
+    while ( _biggestPair > 0 )
+    {
+        std::list<std::list<int>> main;
+        std::list<std::list<int>> pend;
+        std::list<std::string> labelMain;
+        std::list<std::string> labelPend;
+        size_t m_index = 0;
+        // size_t p_index = 0;
+
+        for ( size_t i = 0; i < _l.size(); i += _biggestPair )
+        {
+            if ( i + _biggestPair - 1 >= _l.size() )
+                break;
+            for ( size_t j = 0; j < _biggestPair; ++j )
+            {
+                if ( i / _biggestPair == 0 )
+                {
+                    if ( m_index >= main.size() )
+                    {
+                        main.push_back( std::list<int>() );
+                    }
+                    std::list<std::list<int>>::iterator it = main.begin();
+                    std::advance( it, m_index );
+                    std::list<int>::iterator it2 = _l.begin();
+                    std::advance( it2, i + j );
+                    it->push_back( *it2 );
+                    // int index = 0;
+                    // for ( auto it2 = main.begin(); it2 != main.end(); ++it2 )
+                    // {
+                    //     if ( it2 == it )
+                    //         break;
+                    //     index++;
+                    // }
+                    // std::cout << "index: " << index <<std::endl;
+                    if ( j % _biggestPair == _biggestPair - 1 )
+                    {
+                        labelMain.push_back( "b1" );
+                        ++m_index;
+                    }
+                }
+                else if ( i / _biggestPair % 2 == 1 )
+            }
+
+        }
+    }
 }
 
 int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char **argv machen, warum?
 {
-    std::cout << GREEN << "start!" << RESET << std::endl; 
+    // std::cout << GREEN << "start!" << RESET << std::endl; 
 
     for ( int i = 1; i < argc; ++i )
     {
@@ -395,7 +436,7 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
 
     {
         sortListIntoPairs(); //std::list container logic
-        insertLogicList();
+        initialisingLists();
 
     }
     // for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )

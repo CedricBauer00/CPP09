@@ -28,14 +28,17 @@ class PmergeMe
         ~PmergeMe();
 
         int     merge( const int argc, char **argv ); //konnte nicht const char **argv machen, warum?
-        void    sortListIntoPairs();
+        
         void    sortVectorIntoPairs();
-        void    insertLogicList();
         void    initialisingVectors();
         void    insertVector( std::vector<std::vector<int>> main, std::vector<std::vector<int>> pend,
                 std::vector<std::string> labelPend, std::vector<std::string> labelMain );
         int     binarySortVector( int value, int boundary, std::vector<std::vector<int>> main );
-        void    appendRemaining( std::vector<std::vector<int>> main );
+        void    appendRemainingVector( std::vector<std::vector<int>> main );
+        
+        void    sortListIntoPairs();
+
+        void    initialisingLists();
 
         void    binarySortList( int value );
 };
