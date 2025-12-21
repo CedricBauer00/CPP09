@@ -125,7 +125,7 @@ void    PmergeMe::binarySortList( int value )
     _l.insert( start, value );
 }
 
-int getBoundaryPos( std::vector<std::string> labelMain, std::string label )
+int getBoundaryPosV( std::vector<std::string> labelMain, std::string label )
 {
     label[ 0 ] = 'a';
     
@@ -184,7 +184,7 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
 
         while ( startPos >= 0 ) //durch einzelne elemente durchgehen
         {
-            int boundary = getBoundaryPos( labelMain, labelPend[ startPos ] );
+            int boundary = getBoundaryPosV( labelMain, labelPend[ startPos ] );
             // std::cout << "boundary: " << boundary << std::endl;
             
             int insertPos = binarySortVector( pend[ startPos ][ pend[ startPos ].size() - 1], boundary, main ); //
@@ -352,6 +352,53 @@ void    PmergeMe::sortListIntoPairs()
     _biggestPair = pNum /= 2; //weil pNum ist schon bei size von nur noch einem pair, was die loop beendet
 }
 
+int getBoundaryPosL( std::list<std::string> labelMain, std::string label )
+{
+    label[ 0 ] = 'a';
+    
+    int i = 0;
+
+    for ( std::string temp : labelMain ) //possible error
+    {
+        // std::cout << "cur_main: "<< temp << std::endl;
+        if ( temp == label )
+        {
+            return i;
+        }
+        ++i;
+    }
+
+    return i - 1;
+}
+
+void    insertList( std::list<std::list<int>> main, std::list<std::list<int>> pend, 
+                    std::list<std::string> labelMain, std::list<std::string> labelPend )
+{
+    static size_t jacobCur = 3;
+    static size_t jacobPrev = 1;
+
+
+    while ( !pend.empty() )
+    {
+        ssize_t startPos = jacobCur - jacobPrev;
+
+        if ( ( size_t )startPos == pend.size() )
+        {
+            startPos = pend.size();
+            jacobCur = 3;
+            jacobPrev = 1;
+        }
+        --startPos;
+
+        while ( startPos >= 0 )
+        {
+            std::list<std::string>::iterator it = labelPend.begin();
+            std::advance( it, startPos );
+            int boundary = getBoundaryPosL( labelMain, *it )
+        }
+    }
+}
+
 void    PmergeMe::initialisingLists()
 {
     while ( _biggestPair > 0 )
@@ -361,7 +408,7 @@ void    PmergeMe::initialisingLists()
         std::list<std::string> labelMain;
         std::list<std::string> labelPend;
         size_t m_index = 0;
-        // size_t p_index = 0;
+        size_t p_index = 0;
 
         for ( size_t i = 0; i < _l.size(); i += _biggestPair )
         {
@@ -395,9 +442,46 @@ void    PmergeMe::initialisingLists()
                     }
                 }
                 else if ( i / _biggestPair % 2 == 1 )
+                {
+                    if ( m_index >= main.size() )
+                    {
+                        main.push_back( std::list<int>() );
+                    }
+                    std::list<std::list<int>>::iterator it = main.begin();
+                    std::advance( it, m_index );
+                    std::list<int>::iterator it2 = _l.begin();
+                    std::advance( it2, i + j );
+                    it->push_back( *it2 );
+
+                    if ( j % _biggestPair == _biggestPair - 1 )
+                    {
+                        labelMain.push_back( "a" + std::to_string( m_index ) );
+                        ++m_index;
+                    }
+                }
+                else if ( i / _biggestPair % 2 == 0)
+                {
+                    if ( p_index >= pend.size() )
+                    {
+                        pend.push_back( std::list<int>() );
+                    }
+                    std::list<std::list<int>>::iterator it = pend.begin();
+                    std::advance( it, p_index );
+                    std::list<int>::iterator it2 = _l.begin();
+                    std::advance( it2, i + j );
+                    it->push_back( *it2 );
+                    
+                    if ( j % _biggestPair == _biggestPair -1 )
+                    {
+                        labelPend.push_back( "b" + std::to_string( p_index + 2 ) );
+                        ++p_index;
+                    }
+                }            
             }
 
         }
+        insertList( main, pend, labelMain, labelPend );
+        _biggestPair /= 2;
     }
 }
 
