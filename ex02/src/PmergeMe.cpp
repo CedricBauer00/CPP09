@@ -24,7 +24,6 @@ void    PmergeMe::sortListIntoPairs()
         {
             ++it; //getting end of first pair compononent
         }
-
         while ( it != _l.end() )
         {
             std::list<int>::iterator first = it;
@@ -94,13 +93,13 @@ void    PmergeMe::sortVectorIntoPairs()
     _biggestPair = pNum /= 2; //weil pNum ist schon bei size von nur noch einem pair, was die loop beendet
 }
 
-void    PmergeMe::binarySortVector( int value )
+int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main )
 {
     // std::cout << "Value to look for: " << ORANGE << value << RESET << std::endl;
     // std::cout << "size of v: " << v.size() << std::endl;
 
-    std::vector<int>::iterator start = _v.begin();
-    std::vector<int>::iterator end = _v.end();
+    std::vector<std::vector<int>>::iterator start = main.begin();
+    std::vector<std::vector<int>>::iterator end = main.begin() + boundary;
 
     while ( start != end ) // solange searching area nicht leer ist
     {
@@ -108,10 +107,11 @@ void    PmergeMe::binarySortVector( int value )
         // std::cout << RED << "end value: " << *(end - 1) << RED << std::endl;
         
         // getting middle iterator
-        std::vector<int>::iterator mid = start + ( end - start ) / 2;
+        std::vector<std::vector<int>>::iterator mid = start + ( end - start ) / 2;
         // std::cout << BLUE << "mid: " << *mid << RESET << std::endl;
 
-        if ( *mid < value ) // wenn in der linken haelfte liegt 
+        std::vector<int> pair = main[ mid - main.begin() ]; //getting index
+        if ( pair[ pair.size() - 1 ] < value ) // wenn in der linken haelfte liegt 
         {
             start = mid + 1; // neue border
             // std::cout << "in der rechten seite!" << std::endl;
@@ -121,10 +121,25 @@ void    PmergeMe::binarySortVector( int value )
             end = mid;
             // std::cout << "in der Linken seite!" << std::endl;
         }
-    }
-    
+    }    
     // std::cout << ELEC_RED << "Insert position: " << ( start - _v.begin() ) << ORANGE << " next bigger value: " << *start << RESET << std::endl;
-    _v.insert( start, value );
+    return ( end - main.begin() );
+}
+
+int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main )
+{
+    int start = 0;
+    int biggestPair = main[ start ].size() - 1; //groesse des aktullen pairs
+    
+    if ( value < main[ start ][ biggestPair ])
+    {
+        return start;
+    }
+    while ( start <= boundary )
+    {
+        
+    }
+
 }
 
 void    PmergeMe::binarySortList( int value )
@@ -157,29 +172,89 @@ void    PmergeMe::insertLogicList()
     
 }
 
-void    insertVector(std::vector<std::vector<int>> main, std::vector<std::vector<int>> pend,
-                std::vector<std::string> labelPend, std::vector<std::string> labelMain)
+int getBoundaryPos( std::vector<std::string> labelMain, std::string label )
+{
+    label[ 0 ] = 'a';
+    
+    int i = 0;
+    for ( std::string temp : labelMain )
+    {
+        if ( temp == label )
+        {
+            return i;
+        }
+        ++i;
+    }
+            std::cout << "Here1" << std::endl;
+
+    return i - 1;
+}
+
+void    PmergeMe::appendRemaining(std::vector<std::vector<int>> main)
+{
+    for ( std::vector<int> pairs : main )
+    {
+        for ( int value : pairs )
+        {
+            _result.push_back( value );
+        }
+    }
+
+    for ( size_t i = _result.size(); i < _v.size(); ++i ) // saving remainder
+    {
+        _result.push_back( _v[ i ] );
+    }
+    
+    _v = _result;
+    
+    _result.clear(); // to be reinitialised //would keep saved memory and just append to the end further
+}
+
+void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<std::vector<int>> pend,
+                std::vector<std::string> labelPend, std::vector<std::string> labelMain )
 {
     static size_t jacobCur = 3;
     static size_t jacobPrev = 1;
 
-    for ( size_t i = 0; i < labelPend.size(); ++i )
+    while ( !pend.empty() )
     {
-        if ( labelPend[ i ][ 1 ] = jacobCur )
+        size_t startPos = jacobCur - jacobPrev; //starting posiint    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main ) tion of which element to push 
+        
+        if ( startPos > pend.size() ) // for when there are less elements than jacpobstahal number existent
         {
-            
+            startPos = pend.size();
+            jacobCur = 3;
+            jacobPrev = 1;
         }
+        --startPos; //for index
+
+        while ( startPos >= 0 ) //durch einzelne elemente durchgehen
+        {
+            int boundary = getBoundaryPos( labelMain, labelPend[ startPos ] );
+            int insertPos = binarySortVector( pend[ startPos ][ pend[ startPos ].size() - 1], boundary, main );
+            
+            main.insert( main.begin() + insertPos, pend[ startPos ] );
+            labelMain.insert( labelMain.begin() + insertPos, labelPend[ startPos ] );
+            
+            pend.erase( pend.begin() + startPos );
+            labelPend.erase( labelPend.begin() + startPos );
+            
+            --startPos;
+        }
+        jacobCur = jacobCur + ( jacobPrev * 2 );
+        jacobPrev = jacobCur - ( jacobPrev * 2 );
     }
+    appendRemaining( main );
 }
 
 void    PmergeMe::insertLogicVector()
 {
-        std::cout << GREEN << "Vecotr: " << RESET << std::endl; 
-    for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
-    {
-        std::cout << *it << " ";
-    }
-    std::cout << std::endl;
+    //     std::cout << GREEN << "Vecotr: " << RESET << std::endl; 
+    // for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
+    // {
+    //     std::cout << *it << " ";
+    // }
+    // std::cout << std::endl;
 
     while ( _biggestPair > 0 )
     {
@@ -239,6 +314,7 @@ void    PmergeMe::insertLogicVector()
                     }
                 }
             }
+            
             // std::cout << "printing" << std::endl;
             // for ( size_t i = 0; i < main.size(); ++i)
             // {
@@ -250,7 +326,8 @@ void    PmergeMe::insertLogicVector()
             // }
             // std::cout << std::endl;
         }
-        insertVector( Main, Pend, labelMain, labelPend );
+        insertVector( main, pend, labelMain, labelPend );int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main )
+
         _biggestPair /= 2;
     }
 }
@@ -280,17 +357,7 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
             this->_v.push_back( std::stoi( substr ) );
         }
     }
-
-    {
-        sortListIntoPairs(); //std::list container logic
-        insertLogicList();
-
-    }
-for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
-    {
-        std::cout << *it << " ";
-    }
-    std::cout << std::endl;
+// check fuer 3000 nummbers
 
     {
         sortVectorIntoPairs(); // std::vector container logic
@@ -298,15 +365,26 @@ for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
 
     }
 
-    binarySortVector( 6 ); // falls wir value schon haben den wir einsortieren wollen
-    binarySortList( 6 );
+    // {
+    //     sortListIntoPairs(); //std::list container logic
+    //     insertLogicList();
 
-    std::cout << GREEN << "List: " << RESET << std::endl;
-    for ( std::list<int>::iterator it = _l.begin(); it != _l.end(); ++it )
-    {
-        std::cout << *it << " ";
-    } 
-    std::cout << std::endl;
+    // }
+    // for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
+    // {
+    //     std::cout << *it << " ";
+    // }
+    // std::cout << std::endl;
+
+
+    // binarySortList( 6 );
+
+    // std::cout << GREEN << "List: " << RESET << std::endl;
+    // for ( std::list<int>::iterator it = _l.begin(); it != _l.end(); ++it )
+    // {
+    //     std::cout << *it << " ";
+    // } 
+    // std::cout << std::endl;
 
     std::cout << GREEN << "Vecotr: " << RESET << std::endl; 
     for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )

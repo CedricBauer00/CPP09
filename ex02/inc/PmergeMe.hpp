@@ -20,6 +20,7 @@ class PmergeMe
         std::list<int>      _l;
         std::vector<int>    _v;
         size_t              _biggestPair;
+        std::vector<int>    _result;
     public:
         PmergeMe();
         PmergeMe( const PmergeMe &copy );
@@ -31,7 +32,11 @@ class PmergeMe
         void    sortVectorIntoPairs();
         void    insertLogicList();
         void    insertLogicVector();
-        void    binarySortVector( int value );
+        void    insertVector( std::vector<std::vector<int>> main, std::vector<std::vector<int>> pend,
+                std::vector<std::string> labelPend, std::vector<std::string> labelMain );
+        int     binarySortVector( int value, int boundary, std::vector<std::vector<int>> main );
+        void    appendRemaining( std::vector<std::vector<int>> main );
+
         void    binarySortList( int value );
 };
 
