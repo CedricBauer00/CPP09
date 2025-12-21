@@ -81,6 +81,11 @@ int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vec
     {
         return 0;
     }
+    
+    if ( value > main[ boundary ][ biggestPair ] )
+    {
+        return -1;
+    }
 
     while ( start < boundary - 1 ) // start == boundary -1 exit, sonst infite loop
     {
@@ -160,13 +165,22 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
         while ( startPos >= 0 ) //durch einzelne elemente durchgehen
         {
             int boundary = getBoundaryPosV( labelMain, labelPend[ startPos ] );
-            // std::cout << "boundary: " << boundary << std::endl;
+            //     std::cout << "boundary: " << boundary << std::endl;
             
             int insertPos = binarySortVector( pend[ startPos ][ pend[ startPos ].size() - 1 ], boundary, main ); // pend[ startPos ][ pend[ startPos ].size() - 1]; pair von pend and element startPos, pair an size von pair -1; letzte von diesem pair
             // std::cout << "insertPos: " << insertPos << std::endl;
+
+            if ( insertPos >= 0 )
+            {
+                main.insert( main.begin() + insertPos, pend[ startPos ] );
+                labelMain.insert( labelMain.begin() + insertPos, labelPend[ startPos ] );
+            }
+            else
+            {
+                main.push_back( pend[ startPos ] );
+                labelMain.push_back( labelPend[ startPos ] );
+            }
             
-            main.insert( main.begin() + insertPos, pend[ startPos ] );
-            labelMain.insert( labelMain.begin() + insertPos, labelPend[ startPos ] );
             
             pend.erase( pend.begin() + startPos );
             labelPend.erase( labelPend.begin() + startPos );
@@ -175,8 +189,11 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
             // std::cout << "startPos: " << startPos << std::endl;
         }
 
-        jacobCur = jacobCur + ( jacobPrev * 2 );
-        jacobPrev = jacobCur - ( jacobPrev * 2 );
+        if ( !pend.empty() )
+        {
+            jacobCur = jacobCur + ( jacobPrev * 2 );
+            jacobPrev = jacobCur - ( jacobPrev * 2 );
+        }
     }
 
     appendRemainingVector( main );
@@ -203,7 +220,9 @@ void    PmergeMe::initialisingVectors()
         for ( size_t i = 0; i < _v.size(); i += _biggestPair )
         {
             if ( i + _biggestPair - 1 >= _v.size() )
+            {
                 break;
+            }
             for ( size_t j = 0; j < _biggestPair; ++j )
             {
                 if ( i / _biggestPair == 0 ) // immer nur beim ersten mal - condition fuer i = 0 
@@ -249,6 +268,17 @@ void    PmergeMe::initialisingVectors()
                     }
                 }
             }
+            // std::cout << ORANGE << "TEST: " << i + _biggestPair << "; Max Size: " << _v.size() << RESET << std::endl;
+            // if ( _biggestPair > _v.size() - (i + _biggestPair) )
+            // {
+            //     for ( size_t j = i + _biggestPair; j < _v.size(); ++j)
+            //     {
+            //         std::cout << _v[ j ];
+            //         if (j < _v.size() - 1)
+            //             std::cout << ", "; 
+            //     }
+            //     std::cout << std::endl;
+            // }
             
             // std::cout << "printing" << std::endl;
             // for ( size_t i = 0; i < main.size(); ++i)
@@ -313,7 +343,7 @@ void    PmergeMe::sortListIntoPairs()
                 ++it;
             }
             
-            // auto b = _l.begin();
+            // std::list<int> b = _l.begin();
             // while ( b != _l.end() )
             // {
             //     std::cout << ELEC_RED << *b << " " << RESET;
@@ -359,6 +389,14 @@ int PmergeMe::binarySortList( int value, int boundary, std::list<std::list<int>>
     if ( value < *lastOfPair ) // wenn erstes pair kleiner ist als zweites
     {
         return 0;
+    }
+
+    std::advance( lists, boundary );
+    std::list<int>::iterator lastOfPair2 = lists->begin();
+    std::advance( lastOfPair2, lists->size() - 1 );
+    if ( value > *lastOfPair2 )
+    {
+        return -1;
     }
 
     while ( start < boundary - 1 )
@@ -442,25 +480,34 @@ void    PmergeMe::insertList( std::list<std::list<int>> main, std::list<std::lis
             std::list<int>::iterator itPairIndex = itPend->begin();
             std::advance( itPairIndex, itPend->size() - 1);
             int insertPos = binarySortList( *itPairIndex, boundary, main );
-            
-            std::list<std::list<int>>::iterator itMain = main.begin();
-            std::advance( itMain, insertPos ); // getting insert position
-            
-            main.insert( itMain, *itPend ); //*itPend ist element was wir inserten
-            
-            std::list<std::string>::iterator itLabelMain = labelMain.begin();
-            std::advance( itLabelMain, insertPos );
-            
-            labelMain.insert( itLabelMain, *itLabelPend ); // insert label von itLabelPend
-            
+         
+            if ( insertPos >= 0 )
+            {
+                std::list<std::list<int>>::iterator itMain = main.begin();
+                std::advance( itMain, insertPos ); // getting insert position
+                main.insert( itMain, *itPend ); //*itPend ist element was wir inserten
+                
+                std::list<std::string>::iterator itLabelMain = labelMain.begin();
+                std::advance( itLabelMain, insertPos );            
+                labelMain.insert( itLabelMain, *itLabelPend ); // insert label von itLabelPend
+            }
+            else
+            {
+                main.push_back( *itPend );
+                labelMain.push_back( *itLabelPend );
+            }
+
             pend.erase( itPend ); // pair an itPend
             labelPend.erase( itLabelPend ); // and itLabelPend
             
             --startPos;
         }
         
-        jacobCur = jacobCur + ( jacobPrev * 2 );
-        jacobPrev = jacobCur - ( jacobPrev * 2 );
+        if ( !pend.empty() )
+        {
+            jacobCur = jacobCur + ( jacobPrev * 2 );
+            jacobPrev = jacobCur - ( jacobPrev * 2 );
+        }
     }
     // std::cout << "here1" << std::endl;
 
@@ -490,19 +537,13 @@ void    PmergeMe::initialisingLists()
                     {
                         main.push_back( std::list<int>() );
                     }
+
                     std::list<std::list<int>>::iterator it = main.begin();
                     std::advance( it, m_index );
                     std::list<int>::iterator it2 = _l.begin();
                     std::advance( it2, i + j );
                     it->push_back( *it2 );
-                    // int index = 0;
-                    // for ( auto it2 = main.begin(); it2 != main.end(); ++it2 )
-                    // {
-                    //     if ( it2 == it )
-                    //         break;
-                    //     index++;
-                    // }
-                    // std::cout << "index: " << index <<std::endl;
+
                     if ( j % _biggestPair == _biggestPair - 1 )
                     {
                         labelMain.push_back( "b1" );
@@ -515,6 +556,7 @@ void    PmergeMe::initialisingLists()
                     {
                         main.push_back( std::list<int>() );
                     }
+
                     std::list<std::list<int>>::iterator it = main.begin();
                     std::advance( it, m_index );
                     std::list<int>::iterator it2 = _l.begin();
@@ -533,6 +575,7 @@ void    PmergeMe::initialisingLists()
                     {
                         pend.push_back( std::list<int>() );
                     }
+
                     std::list<std::list<int>>::iterator it = pend.begin();
                     std::advance( it, p_index );
                     std::list<int>::iterator it2 = _l.begin();
@@ -585,15 +628,22 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
     }
 
     {
+        auto start = std::chrono::high_resolution_clock::now();
         sortVectorIntoPairs(); // std::vector container logic
         initialisingVectors();
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        std::cout << "Vector time: " << duration.count() << "; microseconds." << std::endl;
 
     }
 
     {
+        auto start = std::chrono::high_resolution_clock::now();
         sortListIntoPairs(); //std::list container logic
         initialisingLists();
-
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        std::cout << "List time: " << duration.count() << "; microseconds." << std::endl;
     }
     // for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
     // {
