@@ -349,11 +349,15 @@ int getBoundaryPosL( std::list<std::string> labelMain, std::string label )
 int PmergeMe::binarySortList( int value, int boundary, std::list<std::list<int>> main ) // needs rework
 {
     std::list<std::list<int>>::iterator start = main.begin();
-    std::list<std::list<int>>::iterator end = main.end();
-    std::list<int>::iterator            _biggestPair = start->begin();
-    std::advance( _biggestPair, start->size() - 1);
+    int _biggestPair = start->size() - 1;
+
+    while ( value < _biggestPair )
+    {
+        return start;
+    }
     
-    
+
+
     while ( std::distance( start, end ) > 0) // distance wird immer kleiner, bis 0
     {
         size_t dist = std::distance( start, end );
