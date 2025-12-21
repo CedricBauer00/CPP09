@@ -93,38 +93,38 @@ void    PmergeMe::sortVectorIntoPairs()
     _biggestPair = pNum /= 2; //weil pNum ist schon bei size von nur noch einem pair, was die loop beendet
 }
 
-int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main )
-{
-    // std::cout << "Value to look for: " << ORANGE << value << RESET << std::endl;
-    // std::cout << "size of v: " << v.size() << std::endl;
+// int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main )
+// {
+//     // std::cout << "Value to look for: " << ORANGE << value << RESET << std::endl;
+//     // std::cout << "size of v: " << v.size() << std::endl;
 
-    std::vector<std::vector<int>>::iterator start = main.begin();
-    std::vector<std::vector<int>>::iterator end = main.begin() + boundary;
+//     std::vector<std::vector<int>>::iterator start = main.begin();
+//     std::vector<std::vector<int>>::iterator end = main.begin() + boundary;
 
-    while ( start != end ) // solange searching area nicht leer ist
-    {
-        // std::cout << GREEN <<  "\nstart: " << *start << RESET <<  std::endl;
-        // std::cout << RED << "end value: " << *(end - 1) << RED << std::endl;
+//     while ( start != end ) // solange searching area nicht leer ist
+//     {
+//         // std::cout << GREEN <<  "\nstart: " << *start << RESET <<  std::endl;
+//         // std::cout << RED << "end value: " << *(end - 1) << RED << std::endl;
         
-        // getting middle iterator
-        std::vector<std::vector<int>>::iterator mid = start + ( end - start ) / 2;
-        // std::cout << BLUE << "mid: " << *mid << RESET << std::endl;
+//         // getting middle iterator
+//         std::vector<std::vector<int>>::iterator mid = start + ( end - start ) / 2;
+//         // std::cout << BLUE << "mid: " << *mid << RESET << std::endl;
 
-        std::vector<int> pair = main[ mid - main.begin() ]; //getting index
-        if ( pair[ pair.size() - 1 ] < value ) // wenn in der linken haelfte liegt 
-        {
-            start = mid + 1; // neue border
-            // std::cout << "in der rechten seite!" << std::endl;
-        }
-        else
-        {
-            end = mid;
-            // std::cout << "in der Linken seite!" << std::endl;
-        }
-    }    
-    // std::cout << ELEC_RED << "Insert position: " << ( start - _v.begin() ) << ORANGE << " next bigger value: " << *start << RESET << std::endl;
-    return ( end - main.begin() );
-}
+//         std::vector<int> pair = main[ mid - main.begin() ]; //getting index
+//         if ( pair[ pair.size() - 1 ] < value ) // wenn in der linken haelfte liegt 
+//         {
+//             start = mid + 1; // neue border
+//             // std::cout << "in der rechten seite!" << std::endl;
+//         }
+//         else
+//         {
+//             end = mid;
+//             // std::cout << "in der Linken seite!" << std::endl;
+//         }
+//     }    
+//     // std::cout << ELEC_RED << "Insert position: " << ( start - _v.begin() ) << ORANGE << " next bigger value: " << *start << RESET << std::endl;
+//     return ( end - main.begin() );
+// }
 
 int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main )
 {
@@ -135,11 +135,20 @@ int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vec
     {
         return start;
     }
-    while ( start <= boundary )
+    while ( start < boundary - 1 ) // start == boundary -1 exit, sonst infite loop
     {
-        
-    }
+        int mid = (( boundary - start ) / 2 ) + start; // + start damit wir index bekommen 
 
+        if ( value > main[ mid ][ biggestPair ] )
+        {
+            start = mid;
+        }
+        else
+        {
+            boundary = mid;
+        }
+    }
+    return boundary;    
 }
 
 void    PmergeMe::binarySortList( int value )
