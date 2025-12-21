@@ -131,10 +131,12 @@ int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vec
     int start = 0;
     int biggestPair = main[ start ].size() - 1; //groesse des aktullen pairs
     
+    
     if ( value < main[ start ][ biggestPair ])
     {
         return start;
     }
+
     while ( start < boundary - 1 ) // start == boundary -1 exit, sonst infite loop
     {
         int mid = (( boundary - start ) / 2 ) + start; // + start damit wir index bekommen 
@@ -147,7 +149,9 @@ int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vec
         {
             boundary = mid;
         }
+
     }
+
     return boundary;    
 }
 
@@ -186,15 +190,16 @@ int getBoundaryPos( std::vector<std::string> labelMain, std::string label )
     label[ 0 ] = 'a';
     
     int i = 0;
+
     for ( std::string temp : labelMain )
     {
+        std::cout << "cur_main: "<< temp << std::endl;
         if ( temp == label )
         {
             return i;
         }
         ++i;
     }
-            std::cout << "Here1" << std::endl;
 
     return i - 1;
 }
@@ -220,16 +225,16 @@ void    PmergeMe::appendRemaining(std::vector<std::vector<int>> main)
 }
 
 void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<std::vector<int>> pend,
-                std::vector<std::string> labelPend, std::vector<std::string> labelMain )
+                std::vector<std::string> labelMain, std::vector<std::string> labelPend )
 {
     static size_t jacobCur = 3;
     static size_t jacobPrev = 1;
 
     while ( !pend.empty() )
     {
-        size_t startPos = jacobCur - jacobPrev; //starting posiint    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main ) tion of which element to push 
+        ssize_t startPos = jacobCur - jacobPrev; //starting posiint    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main ) tion of which element to push 
         
-        if ( startPos > pend.size() ) // for when there are less elements than jacpobstahal number existent
+        if ( ( size_t )startPos > pend.size() ) // for when there are less elements than jacpobstahal number existent
         {
             startPos = pend.size();
             jacobCur = 3;
@@ -240,19 +245,28 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
         while ( startPos >= 0 ) //durch einzelne elemente durchgehen
         {
             int boundary = getBoundaryPos( labelMain, labelPend[ startPos ] );
-            int insertPos = binarySortVector( pend[ startPos ][ pend[ startPos ].size() - 1], boundary, main );
+            std::cout << "boundary: " << boundary << std::endl;
             
+            int insertPos = binarySortVector( pend[ startPos ][ pend[ startPos ].size() - 1], boundary, main ); //
+            std::cout << "insertPos: " << insertPos << std::endl;
+            
+            std::cout << "here2" << std::endl;
             main.insert( main.begin() + insertPos, pend[ startPos ] );
+            std::cout << "here3" << std::endl;
             labelMain.insert( labelMain.begin() + insertPos, labelPend[ startPos ] );
+            std::cout << "here4" << std::endl;
             
             pend.erase( pend.begin() + startPos );
             labelPend.erase( labelPend.begin() + startPos );
             
             --startPos;
+            std::cout << "startPos: " << startPos << std::endl;
         }
+
         jacobCur = jacobCur + ( jacobPrev * 2 );
         jacobPrev = jacobCur - ( jacobPrev * 2 );
     }
+
     appendRemaining( main );
 }
 
@@ -290,9 +304,9 @@ void    PmergeMe::insertLogicVector()
                     
                     if ( j % _biggestPair == _biggestPair - 1 ) // um nur einmal zu machn - geht nur rein bei letzter iteration von einem Pair
                     {
-                        ++m_index;
                         labelMain.push_back( "b1" );
-                    } 
+                        ++m_index;
+                    }
                 }
                 else if ( i / _biggestPair % 2 == 1 )
                 {
@@ -304,8 +318,8 @@ void    PmergeMe::insertLogicVector()
                     
                     if ( j % _biggestPair == _biggestPair - 1 )
                     {
-                        ++m_index;
                         labelMain.push_back( "a" + std::to_string( m_index ) );
+                        ++m_index;
                     }
                 }
                 else if ( i / _biggestPair % 2 == 0)
@@ -318,8 +332,8 @@ void    PmergeMe::insertLogicVector()
                     
                     if ( j % _biggestPair == _biggestPair -1 )
                     {
+                        labelPend.push_back( "b" + std::to_string( p_index + 2 ) );
                         ++p_index;
-                        labelMain.push_back( "b" + std::to_string( p_index ) );
                     }
                 }
             }
@@ -335,8 +349,13 @@ void    PmergeMe::insertLogicVector()
             // }
             // std::cout << std::endl;
         }
-        insertVector( main, pend, labelMain, labelPend );int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main )
-
+        for (std::string tmp : labelMain ) {
+            std::cout << "maintmp: " << tmp << std::endl;
+        }
+        for (std::string tmp : labelPend ) {
+            std::cout << "pendtmp: " << tmp << std::endl;
+        }
+        insertVector( main, pend, labelMain, labelPend );
         _biggestPair /= 2;
     }
 }
@@ -395,7 +414,7 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
     // } 
     // std::cout << std::endl;
 
-    std::cout << GREEN << "Vecotr: " << RESET << std::endl; 
+    std::cout << GREEN << "Vecoter: " << RESET << std::endl; 
     for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
     {
         std::cout << *it << " ";
