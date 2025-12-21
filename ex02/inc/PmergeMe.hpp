@@ -21,6 +21,7 @@ class PmergeMe
         std::vector<int>    _v;
         size_t              _biggestPair;
         std::vector<int>    _result;
+        std::list<int>      _result_l;
     public:
         PmergeMe();
         PmergeMe( const PmergeMe &copy );
@@ -39,6 +40,7 @@ class PmergeMe
 
 
         void    sortListIntoPairs();
+        void    appendRemainingList( std::list<std::list<int>> main );
 
         void    initialisingLists();
         void    insertList( std::list<std::list<int>> main, std::list<std::list<int>> pend, 

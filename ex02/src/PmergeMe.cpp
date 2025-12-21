@@ -149,7 +149,7 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
     {
         ssize_t startPos = jacobCur - jacobPrev; //starting posiint    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main ) tion of which element to push 
         
-        if ( ( size_t )startPos > pend.size() ) // for when there are less elements than jacpobstahal number existent
+        if ( ( size_t )startPos >= pend.size() ) // for when there are less elements than jacpobstahal number existent
         {
             startPos = pend.size();
             jacobCur = 3;
@@ -342,7 +342,6 @@ int getBoundaryPosL( std::list<std::string> labelMain, std::string label )
         }
         ++i;
     }
-
     return i - 1;
 }
 
@@ -385,20 +384,44 @@ int PmergeMe::binarySortList( int value, int boundary, std::list<std::list<int>>
     return boundary;
 }
 
+void    PmergeMe::appendRemainingList( std::list<std::list<int>> main )
+{
+    for ( std::list<int> pairs : main )
+    {
+        for ( int value : pairs )
+        {
+            _result_l.push_back( value );
+        }
+    }
+    
+    std::list<int>::iterator it = _l.begin();
+    std::advance( it, _result_l.size() );
+
+    while ( it != _l.end() )
+    {
+        _result_l.push_back( *it );
+        ++it;
+    }
+
+    _l = _result_l;
+
+    _result_l.clear();
+}
+
 void    PmergeMe::insertList( std::list<std::list<int>> main, std::list<std::list<int>> pend, 
                     std::list<std::string> labelMain, std::list<std::string> labelPend )
 {
     static size_t jacobCur = 3;
     static size_t jacobPrev = 1;
 
-
     while ( !pend.empty() )
     {
         ssize_t startPos = jacobCur - jacobPrev;
 
-        if ( ( size_t )startPos == pend.size() )
+        if ( ( size_t )startPos >= pend.size() )
         {
             startPos = pend.size();
+                    //  std::cout << "startPos: " << startPos << std::endl;
             jacobCur = 3;
             jacobPrev = 1;
         }
@@ -408,15 +431,40 @@ void    PmergeMe::insertList( std::list<std::list<int>> main, std::list<std::lis
         {
             std::list<std::string>::iterator itLabelPend = labelPend.begin();
             std::advance( itLabelPend, startPos );
-            int boundary = getBoundaryPosL( labelMain, *itLabelPend );
+            
 
+            // std::cout << "print labelpend" << std::endl;
+                
+            int boundary = getBoundaryPosL( labelMain, *itLabelPend );
+            // std::cout << "here3" << std::endl;
             std::list<std::list<int>>::iterator itPend = pend.begin();
             std::advance( itPend, startPos );
             std::list<int>::iterator itPairIndex = itPend->begin();
             std::advance( itPairIndex, itPend->size() - 1);
             int insertPos = binarySortList( *itPairIndex, boundary, main );
+            
+            std::list<std::list<int>>::iterator itMain = main.begin();
+            std::advance( itMain, insertPos ); // getting insert position
+            
+            main.insert( itMain, *itPend ); //*itPend ist element was wir inserten
+            
+            std::list<std::string>::iterator itLabelMain = labelMain.begin();
+            std::advance( itLabelMain, insertPos );
+            
+            labelMain.insert( itLabelMain, *itLabelPend ); // insert label von itLabelPend
+            
+            pend.erase( itPend ); // pair an itPend
+            labelPend.erase( itLabelPend ); // and itLabelPend
+            
+            --startPos;
         }
+        
+        jacobCur = jacobCur + ( jacobPrev * 2 );
+        jacobPrev = jacobCur - ( jacobPrev * 2 );
     }
+    // std::cout << "here1" << std::endl;
+
+    appendRemainingList( main );
 }
 
 void    PmergeMe::initialisingLists()
@@ -528,9 +576,13 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
         {
             this->_l.push_back( std::stoi( substr ) );
             this->_v.push_back( std::stoi( substr ) );
+            if ( _v.size() > 3000 )
+            {
+                std::cerr << RED << "Error: input too big." << RESET << std::endl;
+                return -1;
+            }
         }
     }
-// check fuer 3000 nummbers
 
     {
         sortVectorIntoPairs(); // std::vector container logic
@@ -552,12 +604,31 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
 
     // binarySortList( 6 );
 
-    // std::cout << GREEN << "List: " << RESET << std::endl;
-    // for ( std::list<int>::iterator it = _l.begin(); it != _l.end(); ++it )
-    // {
-    //     std::cout << *it << " ";
-    // } 
-    // std::cout << std::endl;
+    std::cout << GREEN << "List: " << RESET << std::endl;
+    for ( std::list<int>::iterator it = _l.begin(); it != _l.end(); ++it )
+    {
+        std::cout << *it << " ";
+    } 
+    std::cout << std::endl;
+
+    bool check = 0;
+    int i = 1;
+    std::list<int>::iterator compare = _l.begin();
+    for ( std::list<int>::iterator it2 = std::next( _l.begin(), 1 ); it2 != _l.end(); ++it2 )
+    {
+        if ( *compare > *it2 )
+        {
+            std::cout << ELEC_RED << "Error: Is not sorted!\nIndex: " << i << "; Value: " << *it2 << RESET << std::endl;
+            check = 1;
+            break;
+        }
+        ++compare;
+        ++i;
+    }
+    if ( !check )
+    {
+        std::cout << GREEN << "Success!!: List is sorted!" << std::endl;
+    }
 
     std::cout << GREEN << "Vecoter: " << RESET << std::endl; 
     for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
@@ -565,6 +636,24 @@ int    PmergeMe::merge( const int argc, char **argv ) //konnte nicht const char 
         std::cout << *it << " ";
     }
     std::cout << std::endl;
+
+    check = 0;
+    for ( size_t i = 1; i < _v.size(); ++i )
+    {
+        if ( _v [ i - 1 ] > _v [ i ] )
+        {
+            std::cout << ELEC_RED << "Error: Is not sorted! Index: " << i << "; Value: " << _v[ i ] << RESET << std::endl;
+            check = 1;
+            break;
+        }
+    }
+    if ( !check )
+    {
+        std::cout << GREEN << "Success!!: Vector is sorted!" << std::endl;
+    }
+
+    
+
 
     std::cout << GREEN << "Done!" << RESET << std::endl; 
     return 0;
