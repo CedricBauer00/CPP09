@@ -73,13 +73,13 @@ void    PmergeMe::sortVectorIntoPairs()
 
 int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main )
 {
-    int start = 0;
+    int start = 0; //starting boundary
     int biggestPair = main[ start ].size() - 1; //groesse des aktullen pairs
     
     
-    if ( value < main[ start ][ biggestPair ])
+    if ( value < main[ start ][ biggestPair ]) // wenn value (curent pair) kleiner ist als pair das wir checken, dann insert infront
     {
-        return start;
+        return 0;
     }
 
     while ( start < boundary - 1 ) // start == boundary -1 exit, sonst infite loop
@@ -348,33 +348,40 @@ int getBoundaryPosL( std::list<std::string> labelMain, std::string label )
 
 int PmergeMe::binarySortList( int value, int boundary, std::list<std::list<int>> main ) // needs rework
 {
-    std::list<std::list<int>>::iterator start = main.begin();
-    int _biggestPair = start->size() - 1;
+    int start = 0;
 
-    while ( value < _biggestPair )
-    {
-        return start;
-    }
+    std::list<std::list<int>>::iterator lists = main.begin(); //iterator for lists
+    std::list<int>::iterator            lastOfPair = lists->begin(); //it for last value of a pair
     
-
-
-    while ( std::distance( start, end ) > 0) // distance wird immer kleiner, bis 0
+    int _biggestPair = lists->size() - 1;
+    
+    std::advance( lastOfPair, lists->size() - 1);
+    
+    if ( value < *lastOfPair ) // wenn erstes pair kleiner ist als zweites
     {
-        size_t dist = std::distance( start, end );
-        
-        std::list<int>::iterator mid = start;
-        std::advance( mid, dist / 2 );
+        return 0;
+    }
 
-        if ( *mid < value ) // in rechter seite muss start = mid + 1;
+    while ( start < boundary - 1 )
+    {
+        int mid = ( ( boundary - start) / 2 ) + start;
+
+        lists = main.begin();
+        std::advance( lists, mid ); //getting middle pair
+
+        lastOfPair = lists->begin();
+        std::advance( lastOfPair, _biggestPair ); // getting last of new pair
+        
+        if ( value > *lastOfPair )
         {
             start = mid;
-            ++start;
         }
-        else //bei in linker seite muss end = mid;6
+        else
         {
-            end = mid;
+            boundary = mid;
         }
     }
+
     return boundary;
 }
 
