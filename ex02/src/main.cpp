@@ -4,9 +4,14 @@ int main( int argc, char **argv )
 {
     if ( argc > 1 )
     {
-        PmergeMe obj;
-    
-        obj.merge( argc, argv );
+        PmergeMe obj1;
+        PmergeMe obj2; 
+
+        obj2 = obj1;
+
+        PmergeMe algo( obj2 );
+
+        algo.merge( argc, argv );
         return 0;
 
     }

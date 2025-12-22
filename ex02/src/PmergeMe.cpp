@@ -1,8 +1,30 @@
 #include "../inc/PmergeMe.hpp"
 
-PmergeMe::PmergeMe()
+PmergeMe::PmergeMe() : _biggestPair( 0 )
 {
     std::cout << GREEN << "PmergeMe default constructor!" << RESET << std::endl; 
+}
+
+PmergeMe::PmergeMe( const PmergeMe &copy ) : _l( copy._l ), _v( copy._v ), _biggestPair( copy._biggestPair ),
+                                            _result( copy._result ), _result_l( copy._result_l)
+{
+    std::cout << GREEN << "PmergeMe copy constructor!" << RESET << std::endl; 
+}
+
+PmergeMe&   PmergeMe::operator=( const PmergeMe &copy )
+{
+    std::cout << GREEN << "PmergeMe assignment operator!" << RESET << std::endl; 
+
+    if ( this != &copy )
+    {
+        this->_l = copy._l;
+        this->_v = copy._v;
+        this->_biggestPair = copy._biggestPair;
+        this->_result = copy._result;
+        this->_result_l = copy._result_l;
+    }
+
+    return *this;
 }
 
 PmergeMe::~PmergeMe()
@@ -13,10 +35,10 @@ PmergeMe::~PmergeMe()
 void    PmergeMe::sortVectorIntoPairs()
 {
     int pNum = 1;
-    size_t pairs = _v.size(); //10
+    size_t pairs = _v.size();
 
-    while ( pairs > 1 ) //solange wir mehr als 1 pair haben;  7, 6, 1, 2, 3, 4, 9, 8, 5
-    { // pNum = 1; i =0;  pNum = 2; i = 1; pNum = 4; i = 3; 8 7; 16; 15 
+    while ( pairs > 1 )
+    { 
         for ( size_t i = pNum - 1 ; i + pNum < _v.size(); i += 2 * pNum )
         {
             if ( _v[ i ]  > _v[ i + pNum ] )
@@ -27,24 +49,19 @@ void    PmergeMe::sortVectorIntoPairs()
                 }
             }
         }
-        // for ( std::vector<int>::iterator it = v.begin(); it != v.end(); ++it )
-        // {
-        //     std::cout << *it << " ";
-        // }
-        // std::cout << std::endl;
         pNum *= 2;
         pairs /= 2;
     }
-    _biggestPair = pNum /= 2; //weil pNum ist schon bei size von nur noch einem pair, was die loop beendet
+    _biggestPair = pNum /= 2;
 }
 
 int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main )
 {
-    int start = 0; //starting boundary
-    int biggestPair = main[ start ].size() - 1; //groesse des aktullen pairs
+    int start = 0;
+    int biggestPair = main[ start ].size() - 1;
     
     
-    if ( value < main[ start ][ biggestPair ]) // wenn value (curent pair) kleiner ist als pair das wir checken, dann insert infront
+    if ( value < main[ start ][ biggestPair ])
     {
         return 0;
     }
@@ -54,9 +71,9 @@ int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vec
         return -1;
     }
 
-    while ( start < boundary - 1 ) // start == boundary -1 exit, sonst infite loop
+    while ( start < boundary - 1 )
     {
-        int mid = (( boundary - start ) / 2 ) + start; // + start damit wir index bekommen 
+        int mid = (( boundary - start ) / 2 ) + start;
 
         if ( value > main[ mid ][ biggestPair ] )
         {
@@ -79,7 +96,6 @@ int getBoundaryPosV( std::vector<std::string> labelMain, std::string label )
 
     for ( std::string temp : labelMain )
     {
-        // std::cout << "cur_main: "<< temp << std::endl;
         if ( temp == label )
         {
             return i;
@@ -87,7 +103,7 @@ int getBoundaryPosV( std::vector<std::string> labelMain, std::string label )
         ++i;
     }
 
-    return i - 1;
+    return i - 1; 
 }
 
 void    PmergeMe::appendRemainingVector(std::vector<std::vector<int>> main)
@@ -100,14 +116,14 @@ void    PmergeMe::appendRemainingVector(std::vector<std::vector<int>> main)
         }
     }
 
-    for ( size_t i = _result.size(); i < _v.size(); ++i ) // saving remainder
+    for ( size_t i = _result.size(); i < _v.size(); ++i )
     {
         _result.push_back( _v[ i ] );
     }
     
     _v = _result;
     
-    _result.clear(); // to be reinitialised //would keep saved memory and just append to the end further
+    _result.clear();
 }
 
 void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<std::vector<int>> pend,
@@ -118,23 +134,21 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
 
     while ( !pend.empty() )
     {
-        ssize_t startPos = jacobCur - jacobPrev; //starting posiint    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main ) tion of which element to push 
+        ssize_t startPos = jacobCur - jacobPrev;
         
-        if ( ( size_t )startPos >= pend.size() ) // for when there are less elements than jacpobstahal number existent
+        if ( ( size_t )startPos >= pend.size() )
         {
             startPos = pend.size();
             jacobCur = 3;
             jacobPrev = 1;
         }
-        --startPos; //for index
+        --startPos;
 
-        while ( startPos >= 0 ) //durch einzelne elemente durchgehen
+        while ( startPos >= 0 )
         {
             int boundary = getBoundaryPosV( labelMain, labelPend[ startPos ] );
-            //     std::cout << "boundary: " << boundary << std::endl;
             
-            int insertPos = binarySortVector( pend[ startPos ][ pend[ startPos ].size() - 1 ], boundary, main ); // pend[ startPos ][ pend[ startPos ].size() - 1]; pair von pend and element startPos, pair an size von pair -1; letzte von diesem pair
-            // std::cout << "insertPos: " << insertPos << std::endl;
+            int insertPos = binarySortVector( pend[ startPos ][ pend[ startPos ].size() - 1 ], boundary, main );
 
             if ( insertPos >= 0 )
             {
@@ -151,7 +165,6 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
             labelPend.erase( labelPend.begin() + startPos );
             
             --startPos;
-            // std::cout << "startPos: " << startPos << std::endl;
         }
 
         if ( !pend.empty() )
@@ -166,12 +179,6 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
 
 void    PmergeMe::initialisingVectors()
 {
-    //     std::cout << GREEN << "Vecotr: " << RESET << std::endl; 
-    // for ( std::vector<int>::iterator it = _v.begin(); it != _v.end(); ++it )
-    // {
-    //     std::cout << *it << " ";
-    // }
-    // std::cout << std::endl;
 
     while ( _biggestPair > 0 )
     {
@@ -182,79 +189,57 @@ void    PmergeMe::initialisingVectors()
         size_t m_index = 0;
         size_t p_index = 0;
 
-        for ( size_t i = 0; i < _v.size(); i += _biggestPair )
+        for ( size_t i = 0; i < _v.size(); i += _biggestPair ) // i =0; i = 2; i = 4; i = 6; i =8
         {
-            if ( i + _biggestPair - 1 >= _v.size() )// 0 + 4 - 1 >= 9 nein!; 4 + 4 >= 9 nein!;
+            if ( i + _biggestPair - 1 >= _v.size() ) //0 + 2 - 1 >= 9nein!; 2+2 >= 9neiN!; 4 + 2 >=9nein!;
             {
                 break;
             }
-            for ( size_t j = 0; j < _biggestPair; ++j )
+            for ( size_t j = 0; j < _biggestPair; ++j ) // exit loop nach 2 iterationen, weil 1 pair nur 2 gross ist 
             {
-                if ( i / _biggestPair == 0 ) // 0 / 4 == 0ja!; 4/4 = 1 nein!; immer nur beim ersten mal - condition fuer i = 0 
+                if ( i / _biggestPair == 0 ) // 0 / 2 == 0ja!; 2/2=1nein!; 4/2==0nein!;immer nur beim ersten mal - condition fuer i = 0 
                 {
-                    if ( m_index >= main.size() ) // 0 >= 0 ja!;
+                    if ( m_index >= main.size() ) // 0 >= 0 ja!; 0 >= 1nein!; 
                     {
                         main.push_back( std::vector<int>() );
                     }
-                    main[ m_index ].push_back( _v[ i + j ] ); //0+0;
+                    main[ m_index ].push_back( _v[ i + j ] ); //0+ 0; 0 + 1;
                     
-                    if ( j % _biggestPair == _biggestPair - 1 ) // 0 % 4 ==  4 - 1; um nur einmal zu machn - geht nur rein bei letzter iteration von einem Pair
+                    if ( j % _biggestPair == _biggestPair - 1 ) // 0 % 2 == 2-1nein!; 1 % 2 == 2-1ja!  um nur einmal zu machn - geht nur rein bei letzter iteration von einem Pair
                     {
                         labelMain.push_back( "b1" );
                         ++m_index;
                     }
                 }
-                else if ( i / _biggestPair % 2 == 1 ) // it2: 4 / 2 == 1
+                else if ( i / _biggestPair % 2 == 1 ) // it2: 2/2%2=1ja!; 4 / 2%2==1
                 {
-                    if ( m_index >= main.size() ) // 1 >= 1, falsch? aber muss doch noch einen vector pushen oder nicht?
+                    if ( m_index >= main.size() ) // 1 >=1ja!; 1 >= 2nein!; , falsch? aber muss doch noch einen vector pushen oder nicht?
                     {
                         main.push_back( std::vector<int>() );
                     }
                     main[ m_index ].push_back( _v[ i + j ] ); 
                     
-                    if ( j % _biggestPair == _biggestPair - 1 )
+                    if ( j % _biggestPair == _biggestPair - 1 ) // 0%2==2-1nein!; 1%2==2-1ja!
                     {
                         labelMain.push_back( "a" + std::to_string( m_index ) );
                         ++m_index;
                     }
                 }
-                else if ( i / _biggestPair % 2 == 0)
+                else if ( i / _biggestPair % 2 == 0)// 4/2%2==0ja!;
                 {
-                    if ( p_index >= pend.size() )
+                    if ( p_index >= pend.size() ) //0>=0ja!; 0>=1nein!;
                     {
                         pend.push_back( std::vector<int>() );
                     }
                     pend[ p_index ].push_back( _v[ i + j ] );
                     
-                    if ( j % _biggestPair == _biggestPair -1 )
+                    if ( j % _biggestPair == _biggestPair -1 ) // 0%2==2-1nein!; 1%2==2-1ja!; 
                     {
                         labelPend.push_back( "b" + std::to_string( p_index + 2 ) );
                         ++p_index;
                     }
                 }
             }
-            // std::cout << ORANGE << "TEST: " << i + _biggestPair << "; Max Size: " << _v.size() << RESET << std::endl;
-            // if ( _biggestPair > _v.size() - (i + _biggestPair) )
-            // {
-            //     for ( size_t j = i + _biggestPair; j < _v.size(); ++j)
-            //     {
-            //         std::cout << _v[ j ];
-            //         if (j < _v.size() - 1)
-            //             std::cout << ", "; 
-            //     }
-            //     std::cout << std::endl;
-            // }
-            
-            // std::cout << "printing" << std::endl;
-            // for ( size_t i = 0; i < main.size(); ++i)
-            // {
-            //     for ( size_t j = 0; j < main[i].size(); ++j)
-            //     {
-            //         std::cout << main[i][j] << " ";
-            //     }
-            //     std::cout << std::endl;
-            // }
-            // std::cout << std::endl;
         }
         insertVector( main, pend, labelMain, labelPend );
         _biggestPair /= 2;
