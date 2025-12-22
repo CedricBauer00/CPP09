@@ -89,4 +89,4 @@ int RPN::calc( const std::string &input )
     std::cout << _stack.top() << std::endl;
     
     return 0;
-}   
+}

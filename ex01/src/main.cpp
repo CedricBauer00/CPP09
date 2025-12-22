@@ -15,4 +15,10 @@ int main( int argc, char **argv )
         third.calc( argv[ 1 ] );
         return 0;
     }
+    else
+    {
+        std::cout << RED << "Error: too many/less arguments." << RESET << std::endl; 
+    }
+    
+    return 0;
 }

@@ -12,7 +12,7 @@ BitcoinExchange::BitcoinExchange()
     std::string line;
     while ( std::getline( file, line ) )
     {
-        size_t delim = line.find(',');
+        size_t delim = line.find( ',' );
         if ( delim == std::string::npos ) // wenn kein Comma gefunden wurde ueberstring diese Zeile
             continue ;
         
@@ -88,13 +88,18 @@ bool validateDate( const std::string& date )
 
 bool validateValue( const std::string& value )
 {
-    int begin = 0;
+    if ( value.empty() ) return false ;
 
-    if ( value[0] == '-' )
-        begin = 1;
-    for ( size_t i = begin; i < value.length(); ++i )
+    int dots = 0;
+
+    for ( size_t i = 0; i < value.length(); ++i )
     {
-        if ( !isdigit( value[i] ) && value[i] != '.' ) return false ;// wenn andere zeihcen als zaheln oder '.' da sind   
+        if ( value[ i ] == '.' )
+        {
+            ++dots;
+            if ( dots > 1 ) return false ;
+        }
+        else if ( !isdigit( value[ i ] ) ) return false ;// wenn andere zeihcen als zaheln oder '.' da sind   
     }
 
     return true ;
