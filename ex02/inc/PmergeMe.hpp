@@ -29,7 +29,7 @@ class PmergeMe
         PmergeMe& operator=( const PmergeMe &copy );
         ~PmergeMe();
 
-        int     merge( const int argc, char **argv ); //konnte nicht const char **argv machen, warum?
+        int     merge( const int argc, char **argv );
         
         void    sortVectorIntoPairs();
         void    initialisingVectors();
@@ -46,23 +46,5 @@ class PmergeMe
         void    initialisingLists();
         void    insertList( std::list<std::list<int>> main, std::list<std::list<int>> pend, 
                     std::list<std::string> labelMain, std::list<std::string> labelPend );
-        int     binarySortList( int value, int boundary, std::list<std::list<int>> main ); // needs rework
+        int     binarySortList( int value, int boundary, std::list<std::list<int>> main );
 };
-
-// handles positive range of integers
-// must use the Ford Johnson algo - Merge insertion??
-// if error occurs during runtime, appropriate error message on std::cerr
-// use 2 different containers 
-// program must be able to use at least 300 different integers
-// implement algo for each container
-// avoid using generic functions
-// output:
-// 1 line: explicit text, unsorted positive int sequence
-// 2 line: explicit text, sorted positive int sequence 
-// 3 line: explicit message indicating the time the algo took - specifying FIRST container
-// 3 line: explicit message indicating the time the algo took - specifying SECOND container
-
-// format of time display is free - difference between container time must be visible though
-// operation time includes all ops - sorting and data management
-// no std::map or std::stack
-// "The management of errors related to duplicates is left to your discretion."
