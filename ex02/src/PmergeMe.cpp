@@ -13,9 +13,9 @@ PmergeMe::~PmergeMe()
 void    PmergeMe::sortVectorIntoPairs()
 {
     int pNum = 1;
-    size_t pairs = _v.size();
+    size_t pairs = _v.size(); //10
 
-    while ( pairs > 1 )
+    while ( pairs > 1 ) //solange wir mehr als 1 pair haben;  7, 6, 1, 2, 3, 4, 9, 8, 5
     { // pNum = 1; i =0;  pNum = 2; i = 1; pNum = 4; i = 3; 8 7; 16; 15 
         for ( size_t i = pNum - 1 ; i + pNum < _v.size(); i += 2 * pNum )
         {
@@ -37,39 +37,6 @@ void    PmergeMe::sortVectorIntoPairs()
     }
     _biggestPair = pNum /= 2; //weil pNum ist schon bei size von nur noch einem pair, was die loop beendet
 }
-
-// int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main )
-// {
-//     // std::cout << "Value to look for: " << ORANGE << value << RESET << std::endl;
-//     // std::cout << "size of v: " << v.size() << std::endl;
-
-//     std::vector<std::vector<int>>::iterator start = main.begin();
-//     std::vector<std::vector<int>>::iterator end = main.begin() + boundary;
-
-//     while ( start != end ) // solange searching area nicht leer ist
-//     {
-//         // std::cout << GREEN <<  "\nstart: " << *start << RESET <<  std::endl;
-//         // std::cout << RED << "end value: " << *(end - 1) << RED << std::endl;
-        
-//         // getting middle iterator
-//         std::vector<std::vector<int>>::iterator mid = start + ( end - start ) / 2;
-//         // std::cout << BLUE << "mid: " << *mid << RESET << std::endl;
-
-//         std::vector<int> pair = main[ mid - main.begin() ]; //getting index
-//         if ( pair[ pair.size() - 1 ] < value ) // wenn in der linken haelfte liegt 
-//         {
-//             start = mid + 1; // neue border
-//             // std::cout << "in der rechten seite!" << std::endl;
-//         }
-//         else
-//         {
-//             end = mid;
-//             // std::cout << "in der Linken seite!" << std::endl;
-//         }
-//     }    
-//     // std::cout << ELEC_RED << "Insert position: " << ( start - _v.begin() ) << ORANGE << " next bigger value: " << *start << RESET << std::endl;
-//     return ( end - main.begin() );
-// }
 
 int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vector<int>> main )
 {
@@ -99,7 +66,6 @@ int    PmergeMe::binarySortVector( int value, int boundary, std::vector<std::vec
         {
             boundary = mid;
         }
-
     }
 
     return boundary;    
@@ -181,7 +147,6 @@ void    PmergeMe::insertVector( std::vector<std::vector<int>> main, std::vector<
                 labelMain.push_back( labelPend[ startPos ] );
             }
             
-            
             pend.erase( pend.begin() + startPos );
             labelPend.erase( labelPend.begin() + startPos );
             
@@ -219,33 +184,33 @@ void    PmergeMe::initialisingVectors()
 
         for ( size_t i = 0; i < _v.size(); i += _biggestPair )
         {
-            if ( i + _biggestPair - 1 >= _v.size() )
+            if ( i + _biggestPair - 1 >= _v.size() )// 0 + 4 - 1 >= 9 nein!; 4 + 4 >= 9 nein!;
             {
                 break;
             }
             for ( size_t j = 0; j < _biggestPair; ++j )
             {
-                if ( i / _biggestPair == 0 ) // immer nur beim ersten mal - condition fuer i = 0 
+                if ( i / _biggestPair == 0 ) // 0 / 4 == 0ja!; 4/4 = 1 nein!; immer nur beim ersten mal - condition fuer i = 0 
                 {
-                    if ( m_index >= main.size() )
+                    if ( m_index >= main.size() ) // 0 >= 0 ja!;
                     {
                         main.push_back( std::vector<int>() );
                     }
-                    main[ m_index ].push_back( _v[ i + j ] );
+                    main[ m_index ].push_back( _v[ i + j ] ); //0+0;
                     
-                    if ( j % _biggestPair == _biggestPair - 1 ) // um nur einmal zu machn - geht nur rein bei letzter iteration von einem Pair
+                    if ( j % _biggestPair == _biggestPair - 1 ) // 0 % 4 ==  4 - 1; um nur einmal zu machn - geht nur rein bei letzter iteration von einem Pair
                     {
                         labelMain.push_back( "b1" );
                         ++m_index;
                     }
                 }
-                else if ( i / _biggestPair % 2 == 1 )
+                else if ( i / _biggestPair % 2 == 1 ) // it2: 4 / 2 == 1
                 {
-                    if ( m_index >= main.size() )
+                    if ( m_index >= main.size() ) // 1 >= 1, falsch? aber muss doch noch einen vector pushen oder nicht?
                     {
                         main.push_back( std::vector<int>() );
                     }
-                    main[ m_index ].push_back( _v[ i + j ] );
+                    main[ m_index ].push_back( _v[ i + j ] ); 
                     
                     if ( j % _biggestPair == _biggestPair - 1 )
                     {
@@ -291,12 +256,6 @@ void    PmergeMe::initialisingVectors()
             // }
             // std::cout << std::endl;
         }
-        // for (std::string tmp : labelMain ) {
-        //     std::cout << "maintmp: " << tmp << std::endl;
-        // }
-        // for (std::string tmp : labelPend ) {
-        //     std::cout << "pendtmp: " << tmp << std::endl;
-        // }
         insertVector( main, pend, labelMain, labelPend );
         _biggestPair /= 2;
     }
